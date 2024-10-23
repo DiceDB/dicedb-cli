@@ -132,8 +132,12 @@ func toArgInterface(args []string) []interface{} {
 }
 
 func (c *DiceDBClient) handleUnwatchCommand(args []string, ctx context.Context, cmd string) {
-	// TODO: Add error handling when the SDK does not throw an error on every unsubscribe
-	err := c.watchConn.Unwatch(ctx, strings.TrimSuffix(cmd, SuffixUnwatch), toArgInterface(args[1:]))
+
+	baseCmd := strings.TrimSuffix(cmd, SuffixUnwatch)
+
+	watchArgs := []interface{}{args[1]}
+
+	err := c.watchConn.Unwatch(ctx, baseCmd, watchArgs...)
 	if err != nil {
 		fmt.Printf("error: %v\n", err)
 		return
