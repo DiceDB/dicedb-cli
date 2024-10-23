@@ -136,9 +136,12 @@ func (c *DiceDBClient) handleUnwatchCommand(args []string, ctx context.Context, 
 
 	c.printReply("OK")
 	c.subCancel()
+	c.subscribed = false
+	c.subType = ""
 	return
 }
 
+// TODO: Ideally this should only unwatch if the supplied fingerprint is correct.
 func (c *DiceDBClient) handleWatchCommand(cmd string, args []string) {
 	if c.subscribed {
 		fmt.Println("Already in a subscribed or watch state. Unsubscribe first.")
@@ -161,6 +164,8 @@ func (c *DiceDBClient) handleUnsubscribe() {
 		return
 	}
 	c.subCancel()
+	c.subscribed = false
+	c.subType = ""
 	return
 }
 
@@ -200,10 +205,20 @@ func (c *DiceDBClient) handleAuth(args []string, ctx context.Context) {
 }
 
 func (c *DiceDBClient) Completer(d prompt.Document) []prompt.Suggest {
+	// Get the text before the cursor
+	beforeCursor := d.TextBeforeCursor()
+	words := strings.Fields(beforeCursor)
+
+	// Only suggest commands if we're at the first word
+	if len(words) > 1 {
+		return nil
+	}
+
 	text := d.GetWordBeforeCursor()
 	if len(text) == 0 {
 		return nil
 	}
+
 	suggestions := []prompt.Suggest{}
 	for _, cmd := range dicedbCommands {
 		if strings.HasPrefix(strings.ToUpper(cmd), strings.ToUpper(text)) {
