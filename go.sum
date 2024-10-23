@@ -9,8 +9,8 @@ github.com/cespare/xxhash/v2 v2.2.0/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XL
 github.com/cpuguy83/go-md2man/v2 v2.0.4/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f h1:lO4WD4F/rVNCu3HqELle0jiPLLBs70cWOduZpkS1E78=
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f/go.mod h1:cuUVRXasLTGF7a8hSLbxyZXjz+1KgoB3wDUb6vlszIc=
-github.com/dicedb/dicedb-go v0.0.0-20241019185135-cb611decb31b h1:AoSPJbfSWBLQQRfe/hdejb2OCzwiNLLilnDsHinqI7g=
-github.com/dicedb/dicedb-go v0.0.0-20241019185135-cb611decb31b/go.mod h1:p7x5/3S6wBEmiRMwxavj1I1P1xsSVQS6fcSbeai5ic4=
+github.com/dicedb/dicedb-go v0.0.0-20241023134742-71826c9a174e h1:YJDCl4yAaf0XtO2BfLetWwgvwFyzxqnPyxDeJFW/6o0=
+github.com/dicedb/dicedb-go v0.0.0-20241023134742-71826c9a174e/go.mod h1:p7x5/3S6wBEmiRMwxavj1I1P1xsSVQS6fcSbeai5ic4=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
 github.com/mattn/go-colorable v0.1.4/go.mod h1:U0ppj6V5qS13XJ6of8GYAs25YV2eR4EVcfRqFIhoBtE=
