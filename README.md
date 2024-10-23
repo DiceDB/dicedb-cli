@@ -11,7 +11,6 @@ A command-line interface client for [DiceDB](https://dicedb.io).
     - [Watch Commands](#watch-commands)
 - [Command Autocompletion](#command-autocompletion)
 - [For Developers](#for-developers)
-    - [Code Structure](#code-structure)
     - [Contributing](#contributing)
 - [License](#license)
 
