@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/c-bata/go-prompt"
@@ -55,6 +56,7 @@ func Run(host string, port int) {
 		prompt.OptionLivePrefix(dicedbClient.LivePrefix),
 	)
 	p.Run()
+	handleExit()
 }
 
 func (c *DiceDBClient) LivePrefix() (string, bool) {
@@ -74,7 +76,7 @@ func (c *DiceDBClient) Executor(in string) {
 		return
 	}
 	if in == "exit" {
-		os.Exit(0)
+		handleExit()
 	}
 
 	// Prevent executing other commands while subscribed
@@ -359,4 +361,11 @@ func parseArgs(input string) []string {
 		args = append(args, currentArg)
 	}
 	return args
+}
+
+func handleExit() {
+	rawModeOff := exec.Command("/bin/stty", "-raw", "echo")
+	rawModeOff.Stdin = os.Stdin
+	_ = rawModeOff.Run()
+	os.Exit(0)
 }
