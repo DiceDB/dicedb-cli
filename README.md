@@ -1,43 +1,67 @@
-# DiceDB CLI
+# DiceDB CLI Client
 
-A command-line interface for DiceDB.
+A command-line interface client for [DiceDB](https://dicedb.io).
+## Table of Contents
+
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Usage](#usage)
+    - [Basic Commands](#basic-commands)
+    - [Subscription Commands](#subscription-commands)
+    - [Custom Watch Commands](#custom-watch-commands)
+- [Command Autocompletion](#command-autocompletion)
+- [For Developers](#for-developers)
+    - [Code Structure](#code-structure)
+    - [Contributing](#contributing)
+- [License](#license)
 
 ## Features
 
-- Interactive command prompt
-- Command auto-completion
-- Support for all standard DiceDB commands
+- **Interactive Prompt**: Provides an interactive shell to execute DiceDB commands.
+- **Command Autocompletion**: Offers autocompletion for DiceDB commands when typing.
+- **Watch Commands**: Supports custom `.WATCH` and `.UNWATCH` commands to reactively receive updated results of specific commands.
+- **Authentication**: Supports `AUTH` command to authenticate with the DiceDB server.
+
+## Prerequisites
+
+- **Go version 1.23 or later recommended
+- **DiceDB Server**: A running instance of DiceDB. You can find setup instructions on the [DiceDB GitHub page](https://github.com/dicedb/dice).
 
 ## Installation
 
-### Prerequisites
+1. **Clone the Repository**:
 
-- Go 1.23 or higher
-- DiceDB server running locally or accessible network connection
+   ```bash
+   git clone https://github.com/DiceDB/dicedb-cli.git
+   cd dicedb-cli
+   ```
 
-### Installing from source
+2. **Download Dependencies**:
 
-```bash
-# Clone the repository
-git clone https://github.com/DiceDB/dicedb-cli
-cd dicedb-cli
+   ```bash
+   go mod download
+   ```
 
-# Build the CLI
-go build -o dicedb-cli
+3. **Build the Application**:
 
-# Optional: Install globally
-sudo mv dicedb-cli /usr/local/bin/
-```
+   ```bash
+   go build -o dicedb-cli
+   ```
+
+   This will generate an executable named `dicedb-cli` in the current directory.
 
 ## Usage
 
 ### Starting the CLI
 
+Run the executable to start the interactive prompt:
+
 ```bash
 ./dicedb-cli
 ```
 
-By default, the CLI connects to `localhost:7379`. You'll see a prompt indicating successful connection:
+You should see:
 
 ```
 Connected to DiceDB. Type 'exit' or press Ctrl+D to exit.
@@ -46,61 +70,138 @@ dicedb>
 
 ### Basic Commands
 
-Here are some common commands you can use:
+You can execute any DiceDB command directly:
 
-```
-dicedb> SET mykey "Hello World"
+```bash
+dicedb> SET mykey "Hello, World!"
 OK
 dicedb> GET mykey
-"Hello World"
+"Hello, World!"
 dicedb> DEL mykey
 (integer) 1
 ```
 
-### Authentication
+### Watch Commands
 
-If your DiceDB server requires authentication:
+Receive updated results of supported commands using their `.WATCH` variants. These commands keep the prompt in a persistent state, displaying updates when the monitored data changes.
+
+**Start Watching a Key**:
+
+```bash
+dicedb> GET.WATCH mykey
+```
+
+The prompt changes to indicate watch mode:
 
 ```
-dicedb> AUTH your_password
+dicedb(get.watch)>
+```
+
+**Receive Updates**:
+
+When the value of `mykey` changes, the new value is displayed:
+
+```
+Command: GET
+Fingerprint: 1234567890
+Data: "New Value"
+```
+
+**Stop Watching a Key**:
+
+To exit the watch mode, use the corresponding `.UNWATCH` command: 
+```bash
+dicedb(get.watch)> GET.UNWATCH 1234567890 # Use the fingerprint from the watch output
+```
+Output
+```
 OK
+dicedb>
 ```
 
-### Command Auto-completion
+### Exiting the CLI
 
-Press TAB to see available commands or complete partial commands:
+Type `exit` or press `Ctrl+D` to exit the CLI:
 
-```
-dicedb> S[TAB]
-SADD     SET      SMEMBERS SUBSCRIBE
-```
-
-## Supported Commands
-
-The CLI supports all standard DiceDB commands, including:
-
-- **Key-Value Operations**: GET, SET, DEL, INCR, DECR, EXISTS
-- **Lists**: LPUSH, RPUSH, LPOP, RPOP
-- **Sets**: SADD, SREM, SMEMBERS
-- **Hashes**: HSET, HGET, HDEL
-- **Server Management**: AUTH, PING, INFO
-- **Key Space**: KEYS, EXPIRE, TTL
-
-## Exiting the CLI
-
-You can exit the CLI in two ways:
-- Type `exit` and press Enter
-- Press Ctrl+D
-
-## Error Handling
-
-The CLI provides clear error messages for common scenarios:
-
-```
-dicedb> GET
-Error: wrong number of arguments for 'get' command
+```bash
+dicedb> exit
 ```
 
-## Contributing
+## Command Autocompletion
 
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+The CLI provides autocompletion for DiceDB commands when typing the first word. Start typing a command and press `Tab` to see suggestions:
+
+```bash
+dicedb> S    # Press Tab
+```
+
+Suggestions:
+
+- `SET`
+- `SUBSCRIBE`
+- `SADD`
+- `SCAN`
+- ...
+
+### Contributing
+
+Contributions are welcome! Here's how you can help:
+
+1. **Fork the Repository**:
+
+   Click on the `Fork` button at the top right of the repository page.
+
+2. **Clone Your Fork**:
+
+   ```bash
+   git clone https://github.com/yourusername/dicedb-cli-client.git
+   cd dicedb-cli-client
+   ```
+
+3. **Create a New Branch**:
+
+   ```bash
+   git checkout -b feature/my-new-feature
+   ```
+
+4. **Make Your Changes**:
+
+    - Add new features or fix bugs.
+    - Ensure your code follows the project's coding standards.
+
+5. **Commit and Push**:
+
+   ```bash
+   git commit -m 'Add new feature'
+   git push origin feature/my-new-feature
+   ```
+
+6. **Submit a Pull Request**:
+
+   Go to the repository on GitHub and open a pull request.
+
+### Development Setup
+
+Ensure you have Go installed and set up on your machine.
+
+**Download Dependencies**:
+
+```bash
+go mod download
+```
+
+**Run the Application**:
+
+```bash
+go run .
+```
+
+**Testing**:
+
+Add tests as needed to ensure code reliability.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
