@@ -23,7 +23,7 @@ A command-line interface client for [DiceDB](https://dicedb.io).
 
 ## Prerequisites
 
-- **Go version 1.23 or later recommended
+- **Go version 1.23** or later recommended
 - **DiceDB Server**: A running instance of DiceDB. You can find setup instructions on the [DiceDB GitHub page](https://github.com/dicedb/dice).
 
 ## Installation
