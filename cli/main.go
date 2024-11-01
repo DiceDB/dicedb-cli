@@ -118,7 +118,8 @@ func (c *DiceDBClient) Executor(in string) {
 		// Execute other commands
 		res, err := c.client.Do(ctx, toArgInterface(args)...).Result()
 		if err != nil {
-			fmt.Printf("Error: %v\n", err)
+			formattedErr := strings.ReplaceAll(err.Error(), "redis", "diceDB")
+			fmt.Printf("Error: %v\n", formattedErr)
 			return
 		}
 		c.printReply(res)
