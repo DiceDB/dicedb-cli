@@ -54,6 +54,18 @@ func Run(host string, port int) {
 		dicedbClient.Completer,
 		prompt.OptionPrefix("dicedb> "),
 		prompt.OptionLivePrefix(dicedbClient.LivePrefix),
+		// suggestoin
+		prompt.OptionSuggestionBGColor(prompt.DarkGray),
+		prompt.OptionSuggestionTextColor(prompt.White),
+		// selected suggestion
+		prompt.OptionSelectedSuggestionBGColor(prompt.Red),
+		prompt.OptionSelectedSuggestionTextColor(prompt.Black),
+		// description
+		prompt.OptionDescriptionBGColor(prompt.DarkGray),
+		prompt.OptionDescriptionTextColor(prompt.White),
+		// selected description
+		prompt.OptionSelectedDescriptionBGColor(prompt.Red),
+		prompt.OptionSelectedDescriptionTextColor(prompt.Black),
 	)
 	p.Run()
 	handleExit()
