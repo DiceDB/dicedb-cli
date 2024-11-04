@@ -10,6 +10,8 @@ github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f h1:lO4WD4F/r
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f/go.mod h1:cuUVRXasLTGF7a8hSLbxyZXjz+1KgoB3wDUb6vlszIc=
 github.com/dicedb/dicedb-go v0.0.0-20241019185135-cb611decb31b h1:AoSPJbfSWBLQQRfe/hdejb2OCzwiNLLilnDsHinqI7g=
 github.com/dicedb/dicedb-go v0.0.0-20241019185135-cb611decb31b/go.mod h1:p7x5/3S6wBEmiRMwxavj1I1P1xsSVQS6fcSbeai5ic4=
+github.com/dicedb/dicedb-go v0.0.0-20241026093718-570de4575be3 h1:JvnAibMNGA0vQH+T47Y/d5/POURIvfJl3fFk0GIEBkQ=
+github.com/dicedb/dicedb-go v0.0.0-20241026093718-570de4575be3/go.mod h1:p7x5/3S6wBEmiRMwxavj1I1P1xsSVQS6fcSbeai5ic4=
 github.com/mattn/go-colorable v0.1.4/go.mod h1:U0ppj6V5qS13XJ6of8GYAs25YV2eR4EVcfRqFIhoBtE=
 github.com/mattn/go-colorable v0.1.7 h1:bQGKb3vps/j0E9GfJQ03JyhRuxsvdAanXlT9BTw3mdw=
 github.com/mattn/go-colorable v0.1.7/go.mod h1:u6P/XSegPjTcexA+o6vUJrdnUu04hMope9wVRipJSqc=
