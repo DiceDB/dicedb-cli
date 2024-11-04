@@ -4,12 +4,12 @@ go 1.23.2
 
 require (
 	github.com/c-bata/go-prompt v0.2.6
-	github.com/dicedb/dicedb-go v0.0.0-20241023134742-71826c9a174e
+	github.com/dicedb/dicedb-go v0.0.0-20241026093718-570de4575be3
 	github.com/spf13/cobra v1.8.1
 )
 
 require (
-	github.com/cespare/xxhash/v2 v2.2.0 // indirect
+	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.7 // indirect
