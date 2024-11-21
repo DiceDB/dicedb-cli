@@ -48,7 +48,6 @@ func Run(host string, port int) {
 	}
 
 	// Start the prompt
-	fmt.Println("Connected to DiceDB. Type 'exit' to quit.")
 	p := prompt.New(
 		dicedbClient.Executor,
 		dicedbClient.Completer,

@@ -36,7 +36,6 @@ $ dicedb-cli
 You should see
 
 ```sh
-Connected to DiceDB. Type 'exit' or press Ctrl+D to exit.
 dicedb>
 ```
 
