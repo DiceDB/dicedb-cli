@@ -54,6 +54,17 @@ func Run(host string, port int) {
 		dicedbClient.Completer,
 		prompt.OptionPrefix(fmt.Sprintf("dicedb (%s)> ", addr)),
 		prompt.OptionLivePrefix(dicedbClient.LivePrefix),
+		prompt.OptionAddKeyBind(prompt.KeyBind{
+			Key: prompt.ControlC,
+			Fn: func(buf *prompt.Buffer) {
+				if dicedbClient.subscribed {
+					fmt.Println("Exiting watch mode.")
+					dicedbClient.subCancel()
+				} else {
+					handleExit()
+				}
+			},
+		}),
 	)
 	p.Run()
 	handleExit()
@@ -62,7 +73,7 @@ func Run(host string, port int) {
 func (c *DiceDBClient) LivePrefix() (string, bool) {
 	if c.subscribed {
 		if c.subType != "" {
-			return fmt.Sprintf("dicedb (%s)> ", c.addr), true
+			return "", true
 		}
 		return fmt.Sprintf("dicedb (%s) [subscribed]> ", c.addr), true
 	}
@@ -72,6 +83,7 @@ func (c *DiceDBClient) LivePrefix() (string, bool) {
 func (c *DiceDBClient) Executor(in string) {
 	ctx := context.Background()
 	in = strings.TrimSpace(in)
+
 	if in == "" {
 		return
 	}
@@ -297,6 +309,7 @@ func (c *DiceDBClient) watchCommand(cmd string, args ...interface{}) {
 		return
 	}
 
+	fmt.Println("Press Ctrl+C to exit watch mode.")
 	c.printWatchResult(firstMsg)
 
 	channel := c.watchConn.Channel()
