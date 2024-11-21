@@ -48,24 +48,12 @@ func Run(host string, port int) {
 	}
 
 	// Start the prompt
-	fmt.Println("Connected to DiceDB. Type 'exit' or press Ctrl+D to exit.")
+	fmt.Println("Connected to DiceDB. Type 'exit' to quit.")
 	p := prompt.New(
 		dicedbClient.Executor,
 		dicedbClient.Completer,
-		prompt.OptionPrefix("dicedb> "),
+		prompt.OptionPrefix(fmt.Sprintf("dicedb (%s)> ", addr)),
 		prompt.OptionLivePrefix(dicedbClient.LivePrefix),
-		// suggestoin
-		prompt.OptionSuggestionBGColor(prompt.DarkGray),
-		prompt.OptionSuggestionTextColor(prompt.White),
-		// selected suggestion
-		prompt.OptionSelectedSuggestionBGColor(prompt.Red),
-		prompt.OptionSelectedSuggestionTextColor(prompt.Black),
-		// description
-		prompt.OptionDescriptionBGColor(prompt.DarkGray),
-		prompt.OptionDescriptionTextColor(prompt.White),
-		// selected description
-		prompt.OptionSelectedDescriptionBGColor(prompt.Red),
-		prompt.OptionSelectedDescriptionTextColor(prompt.Black),
 	)
 	p.Run()
 	handleExit()
@@ -74,11 +62,11 @@ func Run(host string, port int) {
 func (c *DiceDBClient) LivePrefix() (string, bool) {
 	if c.subscribed {
 		if c.subType != "" {
-			return fmt.Sprintf("dicedb(%s)> ", strings.ToLower(c.subType)), true
+			return fmt.Sprintf("dicedb (%s)> ", c.addr), true
 		}
-		return "dicedb(subscribed)> ", true
+		return fmt.Sprintf("dicedb (%s) [subscribed]> ", c.addr), true
 	}
-	return "dicedb> ", false
+	return fmt.Sprintf("dicedb (%s)> ", c.addr), false
 }
 
 func (c *DiceDBClient) Executor(in string) {
@@ -87,6 +75,7 @@ func (c *DiceDBClient) Executor(in string) {
 	if in == "" {
 		return
 	}
+
 	if in == "exit" {
 		handleExit()
 	}
@@ -162,14 +151,13 @@ func (c *DiceDBClient) handleUnwatchCommand(args []string, ctx context.Context, 
 // TODO: Ideally this should only unwatch if the supplied fingerprint is correct.
 func (c *DiceDBClient) handleWatchCommand(cmd string, args []string) {
 	if c.subscribed {
-		fmt.Println("Already in a subscribed or watch state. Unsubscribe first.")
+		fmt.Println("Cannot execute commands while in subscription mode. Use the corresponding unsubscribe command to exit.")
 		return
 	}
 	c.subscribed = true
 	c.subType = cmd
 	c.subCtx, c.subCancel = context.WithCancel(context.Background())
 
-	// Extract the base command
 	baseCmd := strings.TrimSuffix(cmd, SuffixWatch)
 
 	go c.watchCommand(baseCmd, toArgInterface(args[1:])...)
@@ -266,9 +254,7 @@ func (c *DiceDBClient) printReply(reply interface{}) {
 }
 
 func (c *DiceDBClient) printWatchResult(res *dicedb.WatchResult) {
-	fmt.Printf("Command: %s\n", res.Command)
-	fmt.Printf("Fingerprint: %s\n", res.Fingerprint)
-	fmt.Printf("Data: %v\n", res.Data)
+	c.printReply(res.Data)
 }
 
 func (c *DiceDBClient) subscribe(channels []string) {
@@ -311,11 +297,9 @@ func (c *DiceDBClient) watchCommand(cmd string, args ...interface{}) {
 		return
 	}
 
-	// Print the first message
 	c.printWatchResult(firstMsg)
 
 	channel := c.watchConn.Channel()
-
 	for {
 		select {
 		case <-c.subCtx.Done():
