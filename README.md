@@ -1,6 +1,6 @@
 # DiceDB CLI
 
-[DiceDB](https://dicedb.io) is a redis-compliant, in-memory, real-time, and reactive database optimized for modern hardware and for building and scaling truly real-time applications. This is a command line interface for it.
+[DiceDB](https://dicedb.io) is a redis-compliant, reactive, scalable, highly-available, unified cache optimized for modern hardware. This is a command line interface for it.
 
 ## Get Started
 
@@ -9,7 +9,43 @@ sudo su
 curl -sL https://raw.githubusercontent.com/DiceDB/dicedb-cli/refs/heads/master/install.sh | sh
 ```
 
-### Setting up DiceDB from source for development and contributions
+## Usage
+
+Run the executable to start the interactive prompt (REPL)
+
+```bash
+$ dicedb-cli
+```
+
+You should see
+
+```sh
+dicedb (localhost:7379)>
+```
+
+To connect to some other host or port, you can pass the flags `--host` and `--port` with apt parameters.
+You can also get all available parameters by firing
+
+```sh
+$ dicedb-cli --help
+```
+
+## Firing commands
+
+You can execute any DiceDB command directly:
+
+```bash
+dicedb (localhost:7379)> SET k1 v1
+OK
+dicedb (localhost:7379)> GET k1
+"v1"
+dicedb (localhost:7379)> DEL k1
+1
+```
+
+You can find all available commands at [dicedb.io/docs](https://dicedb.io/docs).
+
+## Setting up DiceDB from source for development and contributions
 
 To run DiceDB CLI for local development or running from source, you will need
 
@@ -20,86 +56,9 @@ To run DiceDB CLI for local development or running from source, you will need
     3. WSL under Windows
 
 ```bash
-git clone https://github.com/dicedb/dicedb-cli
-cd dicedb-cli
-go run main.go
-```
-
-## Usage
-
-Run the executable to start the interactive prompt
-
-```bash
-$ dicedb-cli
-```
-
-You should see
-
-```sh
-dicedb>
-```
-
-### Basic Commands
-
-You can execute any DiceDB command directly:
-
-```bash
-dicedb> SET k1 v1
-OK
-dicedb> GET k1
-v1
-dicedb> DEL k1
-1
-```
-
-### Watch Commands
-
-> To use `.WATCH` commands, make sure your DiceDB server is running with the flag `--enable-watch --enable-multithreading`.
-
-Receive updated results of supported commands using their `.WATCH` variants. These commands keep the prompt in a persistent state, displaying updates when the monitored data changes. Start watching a key:
-
-```bash
-dicedb> GET.WATCH k1
-```
-
-The prompt changes to indicate watch mode:
-
-```
-dicedb(get.watch)>
-```
-
-In other terminal, connect the CLI to the same database and fire
-
-```
-dicedb> SET k1 v2
-```
-
-As the value of key `k1` changes, the new value is emitted to the client connected on the first terminal in real-time.
-
-```
-Command: GET
-Fingerprint: 2402418009
-Data: "v2"
-```
-
-To exit the watch mode, use the corresponding `.UNWATCH` command: 
-
-```bash
-dicedb(get.watch)> GET.UNWATCH 2402418009
-```
-
-Output
-```
-OK
-dicedb>
-```
-
-### Exiting the CLI
-
-Type `exit` or press `Ctrl+D` to exit the CLI:
-
-```bash
-dicedb> exit
+$ git clone https://github.com/dicedb/dicedb-cli
+$ cd dicedb-cli
+$ go run main.go
 ```
 
 ## License
