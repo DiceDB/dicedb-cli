@@ -244,7 +244,8 @@ func (c *DiceDBClient) Completer(d prompt.Document) []prompt.Suggest {
 func (c *DiceDBClient) printReply(reply interface{}) {
 	switch v := reply.(type) {
 	case string:
-		fmt.Println(fmt.Sprintf("\"%s\"", v))
+		txt := fmt.Sprintf("\"%s\"", v)
+		fmt.Println(txt)
 	case int64:
 		fmt.Println(v)
 	case []byte:
@@ -322,24 +323,6 @@ func (c *DiceDBClient) watchCommand(cmd string, args ...interface{}) {
 			c.printWatchResult(res)
 		}
 	}
-}
-
-func (c *DiceDBClient) isAllowedDuringSubscription(input string) bool {
-	args := parseArgs(input)
-	if len(args) == 0 {
-		return false
-	}
-
-	cmd := strings.ToUpper(args[0])
-
-	// Allow UNSUBSCRIBE or the corresponding .UNWATCH command during subscription
-	if cmd == CmdUnsubscribe && c.subType == CmdSubscribe {
-		return true
-	}
-	if strings.HasSuffix(c.subType, SuffixWatch) && cmd == strings.Replace(c.subType, SuffixWatch, SuffixUnwatch, 1) {
-		return true
-	}
-	return false
 }
 
 func parseArgs(input string) []string {
