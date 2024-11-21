@@ -81,20 +81,19 @@ func (c *DiceDBClient) LivePrefix() (string, bool) {
 
 func (c *DiceDBClient) Executor(in string) {
 	ctx := context.Background()
-	in = strings.TrimSpace(in)
 
+	// Do not execute anything if watch mode is on.
+	if c.subscribed {
+		return
+	}
+
+	in = strings.TrimSpace(in)
 	if in == "" {
 		return
 	}
 
 	if in == "exit" {
 		handleExit()
-	}
-
-	// Prevent executing other commands while subscribed
-	if c.subscribed && !c.isAllowedDuringSubscription(in) {
-		fmt.Println("Cannot execute commands while in subscription mode. Use the corresponding unsubscribe command to exit.")
-		return
 	}
 
 	args := parseArgs(in)
