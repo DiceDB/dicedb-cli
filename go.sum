@@ -15,6 +15,10 @@ github.com/dicedb/dicedb-go v0.0.0-20241023134742-71826c9a174e h1:YJDCl4yAaf0XtO
 github.com/dicedb/dicedb-go v0.0.0-20241023134742-71826c9a174e/go.mod h1:p7x5/3S6wBEmiRMwxavj1I1P1xsSVQS6fcSbeai5ic4=
 github.com/dicedb/dicedb-go v0.0.0-20241026093718-570de4575be3 h1:JvnAibMNGA0vQH+T47Y/d5/POURIvfJl3fFk0GIEBkQ=
 github.com/dicedb/dicedb-go v0.0.0-20241026093718-570de4575be3/go.mod h1:p7x5/3S6wBEmiRMwxavj1I1P1xsSVQS6fcSbeai5ic4=
+github.com/dicedb/dicedb-go v0.0.0-20241120180339-1e6eb210622f h1:snDAMNG0lJDUdPVEvO7fqDvszVZrKLipd6fVFDvmqmE=
+github.com/dicedb/dicedb-go v0.0.0-20241120180339-1e6eb210622f/go.mod h1:DuggsMhSh810UH6hH4MXWLflPz+/ZgoFAhhsi53S9e0=
+github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
 github.com/mattn/go-colorable v0.1.4/go.mod h1:U0ppj6V5qS13XJ6of8GYAs25YV2eR4EVcfRqFIhoBtE=
