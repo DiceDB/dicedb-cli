@@ -246,7 +246,7 @@ func (c *DiceDBClient) Completer(d prompt.Document) []prompt.Suggest {
 func (c *DiceDBClient) printReply(reply interface{}) {
 	switch v := reply.(type) {
 	case string:
-		fmt.Println(v)
+		fmt.Println(fmt.Sprintf("\"%s\"", v))
 	case int64:
 		fmt.Println(v)
 	case []byte:
