@@ -60,8 +60,8 @@ func Run(host string, port int) {
 			Fn: func(buf *prompt.Buffer) {
 				if dicedbClient.subscribed {
 					fmt.Println("Exiting watch mode.")
-					dicedbClient.subCancel()
-					dicedbClient.wg.Wait()
+
+					dicedbClient.handleWatchModeExit()
 				} else {
 					handleExit()
 				}
@@ -174,6 +174,12 @@ func (c *DiceDBClient) handleWatchCommand(cmd string, args []string) {
 	baseCmd := strings.TrimSuffix(cmd, SuffixWatch)
 
 	go c.watchCommand(baseCmd, toArgInterface(args[1:])...)
+}
+
+func (c *DiceDBClient) handleWatchModeExit() {
+	c.subCancel()
+	c.subscribed = false
+	c.subType = ""
 }
 
 func (c *DiceDBClient) handleUnsubscribe() {
