@@ -59,8 +59,6 @@ func Run(host string, port int) {
 			Key: prompt.ControlC,
 			Fn: func(buf *prompt.Buffer) {
 				if dicedbClient.subscribed {
-					fmt.Println("Exiting watch mode.")
-
 					dicedbClient.handleWatchModeExit()
 				} else {
 					handleExit()
@@ -177,9 +175,10 @@ func (c *DiceDBClient) handleWatchCommand(cmd string, args []string) {
 }
 
 func (c *DiceDBClient) handleWatchModeExit() {
+	fmt.Println("Exiting watch mode.")
+
 	c.subCancel()
-	c.subscribed = false
-	c.subType = ""
+	c.wg.Wait()
 }
 
 func (c *DiceDBClient) handleUnsubscribe() {
@@ -317,14 +316,16 @@ func (c *DiceDBClient) subscribe(channels []string) {
 
 func (c *DiceDBClient) watchCommand(cmd string, args ...interface{}) {
 	c.wg.Add(1)
-	c.watchConn = c.client.WatchConn(c.subCtx)
-
 	defer func() {
 		c.subscribed = false
 		c.subType = ""
+		if c.watchConn != nil {
+			c.watchConn.Close()
+		}
 		c.wg.Done()
-		c.watchConn.Close()
 	}()
+
+	c.watchConn = c.client.WatchConn(c.subCtx)
 
 	// Send the WATCH command
 	firstMsg, err := c.watchConn.Watch(c.subCtx, cmd, args...)
