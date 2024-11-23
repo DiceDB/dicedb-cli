@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/c-bata/go-prompt"
@@ -47,40 +48,52 @@ func Run(host string, port int) {
 	}
 
 	// Start the prompt
-	fmt.Println("Connected to DiceDB. Type 'exit' or press Ctrl+D to exit.")
 	p := prompt.New(
 		dicedbClient.Executor,
 		dicedbClient.Completer,
-		prompt.OptionPrefix("dicedb> "),
+		prompt.OptionPrefix(fmt.Sprintf("dicedb (%s)> ", addr)),
 		prompt.OptionLivePrefix(dicedbClient.LivePrefix),
+		prompt.OptionAddKeyBind(prompt.KeyBind{
+			Key: prompt.ControlC,
+			Fn: func(buf *prompt.Buffer) {
+				if dicedbClient.subscribed {
+					fmt.Println("Exiting watch mode.")
+					dicedbClient.subCancel()
+				} else {
+					handleExit()
+				}
+			},
+		}),
 	)
 	p.Run()
+	handleExit()
 }
 
 func (c *DiceDBClient) LivePrefix() (string, bool) {
 	if c.subscribed {
 		if c.subType != "" {
-			return fmt.Sprintf("dicedb(%s)> ", strings.ToLower(c.subType)), true
+			return "", true
 		}
-		return "dicedb(subscribed)> ", true
+		return fmt.Sprintf("dicedb (%s) [subscribed]> ", c.addr), true
 	}
-	return "dicedb> ", false
+	return fmt.Sprintf("dicedb (%s)> ", c.addr), false
 }
 
 func (c *DiceDBClient) Executor(in string) {
 	ctx := context.Background()
+
+	// Do not execute anything if watch mode is on.
+	if c.subscribed {
+		return
+	}
+
 	in = strings.TrimSpace(in)
 	if in == "" {
 		return
 	}
-	if in == "exit" {
-		os.Exit(0)
-	}
 
-	// Prevent executing other commands while subscribed
-	if c.subscribed && !c.isAllowedDuringSubscription(in) {
-		fmt.Println("Cannot execute commands while in subscription mode. Use the corresponding unsubscribe command to exit.")
-		return
+	if in == "exit" {
+		handleExit()
 	}
 
 	args := parseArgs(in)
@@ -133,7 +146,7 @@ func toArgInterface(args []string) []interface{} {
 
 func (c *DiceDBClient) handleUnwatchCommand(args []string, ctx context.Context, cmd string) {
 	// TODO: Add error handling when the SDK does not throw an error on every unsubscribe
-	err := c.watchConn.Unwatch(ctx, strings.TrimSuffix(cmd, SuffixUnwatch), toArgInterface(args[1:]))
+	err := c.watchConn.Unwatch(ctx, strings.TrimSuffix(cmd, SuffixUnwatch), args[1])
 	if err != nil {
 		fmt.Printf("error: %v\n", err)
 		return
@@ -148,14 +161,13 @@ func (c *DiceDBClient) handleUnwatchCommand(args []string, ctx context.Context, 
 // TODO: Ideally this should only unwatch if the supplied fingerprint is correct.
 func (c *DiceDBClient) handleWatchCommand(cmd string, args []string) {
 	if c.subscribed {
-		fmt.Println("Already in a subscribed or watch state. Unsubscribe first.")
+		fmt.Println("Cannot execute commands while in subscription mode. Use the corresponding unsubscribe command to exit.")
 		return
 	}
 	c.subscribed = true
 	c.subType = cmd
 	c.subCtx, c.subCancel = context.WithCancel(context.Background())
 
-	// Extract the base command
 	baseCmd := strings.TrimSuffix(cmd, SuffixWatch)
 
 	go c.watchCommand(baseCmd, toArgInterface(args[1:])...)
@@ -235,7 +247,7 @@ func (c *DiceDBClient) printReply(reply interface{}) {
 
 	switch v := reply.(type) {
 	case string:
-		fmt.Printf("%s(string)%s %s\n", grey, reset, v)
+		fmt.Printf("%s(string)%s \"%s\"\n", grey, reset, v)
 	case int64:
 		fmt.Printf("%s(integer)%s %d\n", grey, reset, v)
 	case float64:
@@ -258,9 +270,7 @@ func (c *DiceDBClient) printReply(reply interface{}) {
 }
 
 func (c *DiceDBClient) printWatchResult(res *dicedb.WatchResult) {
-	fmt.Printf("Command: %s\n", res.Command)
-	fmt.Printf("Fingerprint: %s\n", res.Fingerprint)
-	fmt.Printf("Data: %v\n", res.Data)
+	c.printReply(res.Data)
 }
 
 func (c *DiceDBClient) subscribe(channels []string) {
@@ -303,11 +313,10 @@ func (c *DiceDBClient) watchCommand(cmd string, args ...interface{}) {
 		return
 	}
 
-	// Print the first message
+	fmt.Println("Press Ctrl+C to exit watch mode.")
 	c.printWatchResult(firstMsg)
 
 	channel := c.watchConn.Channel()
-
 	for {
 		select {
 		case <-c.subCtx.Done():
@@ -319,24 +328,6 @@ func (c *DiceDBClient) watchCommand(cmd string, args ...interface{}) {
 			c.printWatchResult(res)
 		}
 	}
-}
-
-func (c *DiceDBClient) isAllowedDuringSubscription(input string) bool {
-	args := parseArgs(input)
-	if len(args) == 0 {
-		return false
-	}
-
-	cmd := strings.ToUpper(args[0])
-
-	// Allow UNSUBSCRIBE or the corresponding .UNWATCH command during subscription
-	if cmd == CmdUnsubscribe && c.subType == CmdSubscribe {
-		return true
-	}
-	if strings.HasSuffix(c.subType, SuffixWatch) && cmd == strings.Replace(c.subType, SuffixWatch, SuffixUnwatch, 1) {
-		return true
-	}
-	return false
 }
 
 func parseArgs(input string) []string {
@@ -365,4 +356,11 @@ func parseArgs(input string) []string {
 		args = append(args, currentArg)
 	}
 	return args
+}
+
+func handleExit() {
+	rawModeOff := exec.Command("/bin/stty", "-raw", "echo")
+	rawModeOff.Stdin = os.Stdin
+	_ = rawModeOff.Run()
+	os.Exit(0)
 }
