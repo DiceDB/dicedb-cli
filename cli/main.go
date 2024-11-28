@@ -242,25 +242,30 @@ func (c *DiceDBClient) Completer(d prompt.Document) []prompt.Suggest {
 }
 
 func (c *DiceDBClient) printReply(reply interface{}) {
+	const grey = "\033[2m"
+	const reset = "\033[0m"
+
 	switch v := reply.(type) {
 	case string:
-		txt := fmt.Sprintf("\"%s\"", v)
-		fmt.Println(txt)
+		fmt.Printf("%s(string)%s \"%s\"\n", grey, reset, v)
 	case int64:
-		fmt.Println(v)
+		fmt.Printf("%s(integer)%s %d\n", grey, reset, v)
+	case float64:
+		fmt.Printf("%s(float)%s %f\n", grey, reset, v)
 	case []byte:
-		fmt.Println(string(v))
+		fmt.Printf("%s(string)%s %s\n", grey, reset, string(v))
 	case []interface{}:
+		fmt.Printf("%s(array):%s\n", grey, reset)
 		for i, e := range v {
-			fmt.Printf("%d) ", i+1)
+			fmt.Printf("  %d) ", i+1)
 			c.printReply(e)
 		}
 	case nil:
-		fmt.Println("(nil)")
+		fmt.Printf("%s(nil)%s\n", grey, reset)
 	case error:
-		fmt.Printf("(error) %v\n", v)
+		fmt.Printf("%s(error)%s %v\n", grey, reset, v)
 	default:
-		fmt.Printf("%v\n", v)
+		fmt.Printf("%s(unknown type)%s %v\n", grey, reset, v)
 	}
 }
 
