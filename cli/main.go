@@ -342,8 +342,6 @@ func (c *DiceDBClient) watchCommand(cmd string, args ...interface{}) {
 	for {
 		select {
 		case <-c.subCtx.Done():
-			c.subscribed = false
-			c.subType = ""
 			err = c.watchConn.Unwatch(c.subCtx, cmd, cmdFingerPrint)
 			if err != nil {
 				fmt.Printf("error in unwatch: %v\n", err)
