@@ -221,6 +221,11 @@ func (c *DiceDBClient) handleAuth(args []string, ctx context.Context) {
 }
 
 func (c *DiceDBClient) Completer(d prompt.Document) []prompt.Suggest {
+	suggestions := []prompt.Suggest{}
+
+	if c.subscribed {
+		return suggestions
+	}
 	// Get the text before the cursor
 	beforeCursor := d.TextBeforeCursor()
 	words := strings.Fields(beforeCursor)
@@ -235,7 +240,6 @@ func (c *DiceDBClient) Completer(d prompt.Document) []prompt.Suggest {
 		return nil
 	}
 
-	suggestions := []prompt.Suggest{}
 	for _, cmd := range dicedbCommands {
 		if strings.HasPrefix(strings.ToUpper(cmd), strings.ToUpper(text)) {
 			suggestions = append(suggestions, prompt.Suggest{Text: cmd})
