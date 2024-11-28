@@ -265,7 +265,12 @@ func (c *DiceDBClient) printReply(reply interface{}) {
 }
 
 func (c *DiceDBClient) printWatchResult(res *dicedb.WatchResult) {
-	c.printReply(res.Data)
+	c.printReply([]interface{}{
+		"fingerprint",
+		res.Fingerprint,
+		"data",
+		res.Data,
+	})
 }
 
 func (c *DiceDBClient) subscribe(channels []string) {
