@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -131,7 +132,7 @@ func (c *DiceDBClient) Executor(in string) {
 
 		// Execute other commands
 		res, err := c.client.Do(ctx, toArgInterface(args)...).Result()
-		if err != nil {
+		if err != nil && !errors.Is(err, dicedb.Nil) {
 			fmt.Printf("Error: %v\n", err)
 			return
 		}
