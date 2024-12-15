@@ -3,6 +3,7 @@ set -e
 
 REPO="DiceDB/dicedb-cli"
 LATEST_RELEASE=$(curl -s https://api.github.com/repos/$REPO/releases/latest | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+VERSION=$(echo $LATEST_RELEASE | sed 's/^v//')
 
 # Detect the operating system and architecture
 OS=$(uname -s)
@@ -22,7 +23,7 @@ case $ARCH in
   *) echo "Architecture not supported"; exit 1 ;;
 esac
 
-BINARY="dicedb-cli_${LATEST_RELEASE}_${OS}_${ARCH}.tar.gz"
+BINARY="dicedb-cli_${VERSION}_${OS}_${ARCH}.tar.gz"
 URL="https://github.com/$REPO/releases/download/$LATEST_RELEASE/$BINARY"
 
 echo "Downloading $BINARY..."

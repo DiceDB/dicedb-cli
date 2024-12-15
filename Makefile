@@ -10,6 +10,6 @@ lint: check-golangci-lint
 	golangci-lint run ./...
 
 release:
-	git tag 0.0.2
-	git push origin 0.0.2
+	git tag v0.0.3
+	git push origin v0.0.3
 	goreleaser release --clean
