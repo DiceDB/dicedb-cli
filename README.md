@@ -1,13 +1,30 @@
 # DiceDB CLI
 
-[DiceDB](https://dicedb.io) is a redis-compliant, reactive, scalable, highly-available, unified cache optimized for modern hardware. This is a command line interface for it.
+This is a command line interface for [DiceDB](https://dicedb.io).
 
 ## Get Started
 
-```sh
-sudo su
-curl -sL https://raw.githubusercontent.com/DiceDB/dicedb-cli/refs/heads/master/install.sh | sh
+### Using cURL
+
+The best way to connect to DiceDB is using [DiceDB CLI](https://github.com/DiceDB/dicedb-cli) and you can install it by running the following command
+
+```bash
+$ sudo su
+$ curl -sL https://raw.githubusercontent.com/DiceDB/dicedb-cli/refs/heads/master/install.sh | sh
 ```
+
+If you are working on unsupported OS (as per above script), you can always follow the installation instructions mentioned in the [dicedb/cli](https://github.com/DiceDB/dicedb-cli) repository.
+
+### Building from source
+
+```sh
+$ git clone https://github.com/DiceDB/dicedb-cli
+$ cd dicedb-cli
+$ make build
+```
+
+The above command will create a binary `dicedb-cli`. Execute the binary will
+start the CLI and will try to connect to the DiceDB server.
 
 ## Usage
 
@@ -44,22 +61,6 @@ dicedb (localhost:7379)> DEL k1
 ```
 
 You can find all available commands at [dicedb.io/docs](https://dicedb.io/docs).
-
-## Setting up DiceDB from source for development and contributions
-
-To run DiceDB CLI for local development or running from source, you will need
-
-1. [Golang](https://go.dev/)
-2. Any of the below supported platform environments:
-    1. [Linux based environment](https://en.wikipedia.org/wiki/Comparison_of_Linux_distributions)
-    2. [OSX (Darwin) based environment](https://en.wikipedia.org/wiki/MacOS)
-    3. WSL under Windows
-
-```bash
-$ git clone https://github.com/dicedb/dicedb-cli
-$ cd dicedb-cli
-$ go run main.go
-```
 
 ## License
 
