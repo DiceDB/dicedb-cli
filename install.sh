@@ -57,4 +57,4 @@ echo "\n
 ╚═════╝ ╚═╝ ╚═════╝╚══════╝╚═════╝ ╚═════╝
 "
 echo "> if you get 'command not found' error, add '/usr/local/bin' to your 'PATH' variable."
-echo "\nDiceDB CLI installation complete ✓"
+echo "DiceDB CLI installation complete ✓"

@@ -59,9 +59,7 @@ func Run(host string, port int) {
 			Key: prompt.ControlC,
 			Fn: func(buf *prompt.Buffer) {
 				if dicedbClient.subscribed {
-					fmt.Println("Exiting watch mode.")
-					dicedbClient.subCancel()
-					dicedbClient.wg.Wait()
+					dicedbClient.handleWatchModeExit()
 				} else {
 					handleExit()
 				}
@@ -174,6 +172,13 @@ func (c *DiceDBClient) handleWatchCommand(cmd string, args []string) {
 	baseCmd := strings.TrimSuffix(cmd, SuffixWatch)
 
 	go c.watchCommand(baseCmd, toArgInterface(args[1:])...)
+}
+
+func (c *DiceDBClient) handleWatchModeExit() {
+	fmt.Println("Exiting watch mode.")
+
+	c.subCancel()
+	c.wg.Wait()
 }
 
 func (c *DiceDBClient) handleUnsubscribe() {
@@ -311,14 +316,16 @@ func (c *DiceDBClient) subscribe(channels []string) {
 
 func (c *DiceDBClient) watchCommand(cmd string, args ...interface{}) {
 	c.wg.Add(1)
-	c.watchConn = c.client.WatchConn(c.subCtx)
-
 	defer func() {
 		c.subscribed = false
 		c.subType = ""
+		if c.watchConn != nil {
+			c.watchConn.Close()
+		}
 		c.wg.Done()
-		c.watchConn.Close()
 	}()
+
+	c.watchConn = c.client.WatchConn(c.subCtx)
 
 	// Send the WATCH command
 	firstMsg, err := c.watchConn.Watch(c.subCtx, cmd, args...)
@@ -335,8 +342,6 @@ func (c *DiceDBClient) watchCommand(cmd string, args ...interface{}) {
 	for {
 		select {
 		case <-c.subCtx.Done():
-			c.subscribed = false
-			c.subType = ""
 			err = c.watchConn.Unwatch(c.subCtx, cmd, cmdFingerPrint)
 			if err != nil {
 				fmt.Printf("error in unwatch: %v\n", err)
