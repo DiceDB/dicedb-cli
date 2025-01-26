@@ -16,3 +16,10 @@ release:
 	git tag v0.0.3
 	git push origin v0.0.3
 	goreleaser release --clean
+
+generate:
+	protoc --go_out=. --go-grpc_out=. protos/cmd.proto
+
+update:
+	git submodule update --remote
+	git submodule update --init --recursive

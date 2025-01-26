@@ -6,6 +6,7 @@ require (
 	github.com/c-bata/go-prompt v0.2.6
 	github.com/dicedb/dicedb-go v0.1.1
 	github.com/spf13/cobra v1.8.1
+	google.golang.org/protobuf v1.36.4
 )
 
 require (
@@ -21,3 +22,5 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	golang.org/x/sys v0.0.0-20200918174421-af09f7315aff // indirect
 )
+
+replace github.com/DiceDB/dicedb-go => ../dicedb-go
