@@ -1,4 +1,4 @@
 [submodule "protos"]
 	path = protos
-	url = https://github.com/dicedb/dicedb-protos.git
+	url = git@github.com:dicedb/dicedb-protos.git
 	branch = master
