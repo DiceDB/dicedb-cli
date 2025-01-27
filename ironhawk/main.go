@@ -16,11 +16,9 @@ func Run(host string, port int) error {
 		return fmt.Errorf("failed to connect to %s: %v", addr, err)
 	}
 	defer conn.Close()
-	fmt.Println("connected to ", addr)
-
 	cmd := &wire.Command{
-		Cmd:  "example",
-		Args: []string{"arg1", "arg2"},
+		Cmd:  "PING",
+		Args: []string{},
 	}
 
 	// Serialize the command
@@ -35,25 +33,11 @@ func Run(host string, port int) error {
 		return fmt.Errorf("failed to send command: %v", err)
 	}
 
-	// Read response
-	buf := make([]byte, 4096)
-	n, err := conn.Read(buf)
+	resp, err := Read(conn)
 	if err != nil {
 		return fmt.Errorf("failed to read response: %v", err)
 	}
 
-	// Unmarshal response
-	resp := &wire.Response{}
-	err = proto.Unmarshal(buf[:n], resp)
-	if err != nil {
-		return fmt.Errorf("failed to unmarshal response: %v", err)
-	}
-
-	// Handle response
-	if !resp.Success {
-		return fmt.Errorf("command failed: %s (error: %s)", resp.Msg, resp.Err)
-	}
-
-	fmt.Printf("Command succeeded: %s\n", resp.Msg)
+	fmt.Println(resp.Msg)
 	return nil
 }
