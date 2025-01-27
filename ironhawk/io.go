@@ -52,3 +52,12 @@ func Read(conn net.Conn) (*wire.Response, error) {
 	}
 	return r, nil
 }
+
+func Write(conn net.Conn, c *wire.Command) error {
+	data, err := proto.Marshal(c)
+	if err != nil {
+		return err
+	}
+	_, err = conn.Write(data)
+	return err
+}
