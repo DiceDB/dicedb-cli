@@ -1,9 +1,8 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/DiceDB/dicedb-cli/ironhawk"
+	"github.com/DiceDB/dicedb-cli/silverpine"
 	"github.com/spf13/cobra"
 )
 
@@ -16,13 +15,12 @@ var benchCmd = &cobra.Command{
 		if engine == "ironhawk" {
 			ironhawk.Benchmark(numConns)
 		} else {
-			fmt.Println("Invalid engine")
+			silverpine.Benchmark(numConns)
 		}
 	},
 }
 
 func init() {
 	benchCmd.Flags().Int("num-connections", 4, "number of connections in parallel to fire the requests")
-	benchCmd.Flags().String("engine", "ironhawk", "engine to use for the benchmark: ironhawk, resp")
 	rootCmd.AddCommand(benchCmd)
 }
