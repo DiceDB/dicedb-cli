@@ -23,3 +23,6 @@ generate:
 update:
 	git submodule update --remote
 	git submodule update --init --recursive
+
+bench:
+	go run main.go bench --num-connections=4 --engine=ironhawk

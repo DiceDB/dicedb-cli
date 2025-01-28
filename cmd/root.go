@@ -19,8 +19,8 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.Flags().String("host", "localhost", "hostname or ip address of the DiceDB server")
-	rootCmd.Flags().Int("port", 7379, "port number of the DiceDB server")
+	rootCmd.PersistentFlags().String("host", "localhost", "hostname or ip address of the DiceDB server")
+	rootCmd.PersistentFlags().Int("port", 7379, "port number of the DiceDB server")
 }
 
 func Execute() {
