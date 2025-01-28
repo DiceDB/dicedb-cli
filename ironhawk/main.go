@@ -68,8 +68,19 @@ func Run(host string, port int) {
 			continue
 		}
 
-		if resp.Success {
-			fmt.Printf("%s %s\n", boldGreen("OK"), resp.Msg)
+		if resp.Err == "" {
+			switch resp.Value.(type) {
+			case *wire.Response_VStr:
+				fmt.Printf("%s %s\n", boldGreen("OK"), resp.Value.(*wire.Response_VStr).VStr)
+			case *wire.Response_VInt:
+				fmt.Printf("%s %d\n", boldGreen("OK"), resp.Value.(*wire.Response_VInt).VInt)
+			case *wire.Response_VFloat:
+				fmt.Printf("%s %f\n", boldGreen("OK"), resp.Value.(*wire.Response_VFloat).VFloat)
+			case *wire.Response_VBytes:
+				fmt.Printf("%s %v\n", boldGreen("OK"), resp.Value.(*wire.Response_VBytes).VBytes)
+			case *wire.Response_VNil:
+				fmt.Printf("%s %s\n", boldGreen("OK"), "(nil)")
+			}
 		} else {
 			fmt.Printf("%s %s\n", boldRed("ERR"), resp.Err)
 		}
