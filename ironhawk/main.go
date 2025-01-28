@@ -19,11 +19,20 @@ var (
 	boldBlue  = color.New(color.FgBlue, color.Bold).SprintFunc()
 )
 
-func Run(host string, port int) {
+func NewConn(host string, port int) net.Conn {
 	addr := fmt.Sprintf("%s:%d", host, port)
 	conn, err := net.DialTimeout("tcp", addr, 5*time.Second)
 	if err != nil {
 		fmt.Println("error:", err)
+		return nil
+	}
+	return conn
+}
+
+func Run(host string, port int) {
+	conn := NewConn(host, port)
+	if conn == nil {
+		fmt.Println("Failed to create connection")
 		return
 	}
 	defer conn.Close()
