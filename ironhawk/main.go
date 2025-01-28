@@ -1,6 +1,7 @@
 package ironhawk
 
 import (
+	"bufio"
 	"fmt"
 	"net"
 	"os"
@@ -42,7 +43,8 @@ func Run(host string, port int) {
 		fmt.Printf("%s:%s> ", boldBlue(host), boldBlue(port))
 		var input string
 
-		_, _ = fmt.Scanln(&input)
+		reader := bufio.NewReader(os.Stdin)
+		input, _ = reader.ReadString('\n')
 		input = strings.TrimSpace(input)
 
 		if input == "exit" {
