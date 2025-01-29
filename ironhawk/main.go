@@ -1,7 +1,6 @@
 package ironhawk
 
 import (
-	"bufio"
 	"fmt"
 	"net"
 	"os"
@@ -10,6 +9,7 @@ import (
 	"time"
 
 	"github.com/DiceDB/dicedb-cli/wire"
+	"github.com/chzyer/readline"
 	"github.com/fatih/color"
 )
 
@@ -37,6 +37,17 @@ func Run(host string, port int) {
 	}
 	defer conn.Close()
 
+	// Initialize readline
+	rl, err := readline.NewEx(&readline.Config{
+		Prompt:      fmt.Sprintf("%s:%s> ", boldBlue(host), boldBlue(port)),
+		HistoryFile: os.ExpandEnv("$HOME/.dicedb_history"),
+	})
+	if err != nil {
+		fmt.Printf("%s failed to initialize readline: %v\n", boldRed("ERR"), err)
+		return
+	}
+	defer rl.Close()
+
 	// Setup signal handling
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt)
@@ -44,20 +55,23 @@ func Run(host string, port int) {
 	// Handle Ctrl+C in a separate goroutine
 	go func() {
 		<-sigChan
-		fmt.Println("received interrupt. exiting...")
+		fmt.Println("\nreceived interrupt. exiting...")
 		os.Exit(0)
 	}()
 
 	for {
-		fmt.Printf("%s:%s> ", boldBlue(host), boldBlue(port))
-		var input string
-
-		reader := bufio.NewReader(os.Stdin)
-		input, _ = reader.ReadString('\n')
+		input, err := rl.Readline()
+		if err != nil { // io.EOF, readline.ErrInterrupt
+			break
+		}
 		input = strings.TrimSpace(input)
 
 		if input == "exit" {
 			return
+		}
+
+		if input == "" {
+			continue
 		}
 
 		args := strings.Fields(input)

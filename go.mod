@@ -4,6 +4,7 @@ go 1.23.2
 
 require (
 	github.com/c-bata/go-prompt v0.2.6
+	github.com/chzyer/readline v1.5.1
 	github.com/dicedb/dicedb-go v0.1.1
 	github.com/fatih/color v1.18.0
 	github.com/spf13/cobra v1.8.1

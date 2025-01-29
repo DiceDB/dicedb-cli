@@ -28,11 +28,11 @@ func benchmarkCommand(b *testing.B) {
 		keys[i] = fmt.Sprintf("key-%d", i)
 	}
 
-	conn.Get(context.Background(), keys[0]).Result()
+	_, _ = conn.Get(context.Background(), keys[0]).Result()
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		conn.Get(context.Background(), keys[i%1000]).Result()
+		_, _ = conn.Get(context.Background(), keys[i%1000]).Result()
 	}
 }
 
