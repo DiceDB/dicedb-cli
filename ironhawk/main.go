@@ -94,17 +94,26 @@ func Run(host string, port int) {
 		}
 
 		if resp.Err == "" {
+			fmt.Printf("%s ", boldGreen("OK"))
+			if len(resp.Attrs.AsMap()) > 0 {
+				attrs := []string{}
+				for k, v := range resp.Attrs.AsMap() {
+					attrs = append(attrs, fmt.Sprintf("%s=%s", k, v))
+				}
+				fmt.Printf("[%s] ", strings.Join(attrs, ", "))
+			}
+
 			switch resp.Value.(type) {
 			case *wire.Response_VStr:
-				fmt.Printf("%s %s\n", boldGreen("OK"), resp.Value.(*wire.Response_VStr).VStr)
+				fmt.Printf("%s\n", resp.Value.(*wire.Response_VStr).VStr)
 			case *wire.Response_VInt:
-				fmt.Printf("%s %d\n", boldGreen("OK"), resp.Value.(*wire.Response_VInt).VInt)
+				fmt.Printf("%d\n", resp.Value.(*wire.Response_VInt).VInt)
 			case *wire.Response_VFloat:
-				fmt.Printf("%s %f\n", boldGreen("OK"), resp.Value.(*wire.Response_VFloat).VFloat)
+				fmt.Printf("%f\n", resp.Value.(*wire.Response_VFloat).VFloat)
 			case *wire.Response_VBytes:
-				fmt.Printf("%s %v\n", boldGreen("OK"), resp.Value.(*wire.Response_VBytes).VBytes)
+				fmt.Printf("%s\n", resp.Value.(*wire.Response_VBytes).VBytes)
 			case *wire.Response_VNil:
-				fmt.Printf("%s %s\n", boldGreen("OK"), "(nil)")
+				fmt.Printf("(nil)\n")
 			}
 		} else {
 			fmt.Printf("%s %s\n", boldRed("ERR"), resp.Err)
