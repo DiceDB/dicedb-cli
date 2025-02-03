@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/DiceDB/dicedb-cli/ironhawk"
-	"github.com/DiceDB/dicedb-cli/silverpine"
 	"github.com/spf13/cobra"
 )
 
@@ -11,12 +10,7 @@ var benchCmd = &cobra.Command{
 	Short: "quickly benchmark the performance of DiceDB",
 	Run: func(cmd *cobra.Command, args []string) {
 		numConns, _ := cmd.Flags().GetInt("num-connections")
-		engine, _ := cmd.Flags().GetString("engine")
-		if engine == "ironhawk" {
-			ironhawk.Benchmark(numConns)
-		} else {
-			silverpine.Benchmark(numConns)
-		}
+		ironhawk.Benchmark(numConns)
 	},
 }
 

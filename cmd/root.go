@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/DiceDB/dicedb-cli/cli"
 	"github.com/DiceDB/dicedb-cli/ironhawk"
 	"github.com/spf13/cobra"
 )
@@ -15,20 +14,13 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		host, _ := cmd.Flags().GetString("host")
 		port, _ := cmd.Flags().GetInt("port")
-		engine, _ := cmd.Flags().GetString("engine")
-
-		if engine == "ironhawk" {
-			ironhawk.Run(host, port)
-		} else {
-			cli.Run(host, port)
-		}
+		ironhawk.Run(host, port)
 	},
 }
 
 func init() {
 	rootCmd.PersistentFlags().String("host", "localhost", "hostname or ip address of the DiceDB server")
 	rootCmd.PersistentFlags().Int("port", 7379, "port number of the DiceDB server")
-	rootCmd.PersistentFlags().String("engine", "silverpine", "engine to use for the benchmark: ironhawk, silverpine")
 }
 
 func Execute() {

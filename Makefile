@@ -1,5 +1,5 @@
 run:
-	go run main.go --engine ironhawk
+	go run main.go
 
 build:
 	go build -o ./dicedb-cli

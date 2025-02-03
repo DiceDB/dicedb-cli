@@ -37,7 +37,7 @@ $ dicedb-cli
 You should see
 
 ```sh
-dicedb (localhost:7379)>
+localhost:7379>
 ```
 
 To connect to some other host or port, you can pass the flags `--host` and `--port` with apt parameters.
@@ -52,12 +52,12 @@ $ dicedb-cli --help
 You can execute any DiceDB command directly:
 
 ```bash
-dicedb (localhost:7379)> SET k1 v1
-OK
-dicedb (localhost:7379)> GET k1
-"v1"
-dicedb (localhost:7379)> DEL k1
-1
+localhost:7379> SET k1 v1
+OK OK
+localhost:7379> GET k1
+OK "v1"
+localhost:7379> DEL k1
+OK 1
 ```
 
 You can find all available commands at [dicedb.io/docs](https://dicedb.io/docs).
