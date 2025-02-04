@@ -73,11 +73,11 @@ func Run(host string, port int) {
 		}
 
 		resp := client.Fire(c)
+
 		if strings.HasSuffix(strings.ToUpper(args[0]), ".WATCH") {
 			fmt.Println("entered the watch mode for", c.Cmd, strings.Join(c.Args, " "))
-			for {
+			for resp := range client.WatchCh() {
 				renderResponse(resp)
-				resp = client.Fire(c)
 			}
 		} else {
 			renderResponse(resp)

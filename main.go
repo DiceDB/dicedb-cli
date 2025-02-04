@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/DiceDB/dicedb-cli/cmd"
+	"github.com/dicedb/dicedb-cli/cmd"
 )
 
 func main() {

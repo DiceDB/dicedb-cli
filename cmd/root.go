@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/DiceDB/dicedb-cli/ironhawk"
+	"github.com/dicedb/dicedb-cli/ironhawk"
 	"github.com/spf13/cobra"
 )
 

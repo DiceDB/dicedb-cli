@@ -6,19 +6,19 @@ This is a command line interface for [DiceDB](https://dicedb.io).
 
 ### Using cURL
 
-The best way to connect to DiceDB is using [DiceDB CLI](https://github.com/DiceDB/dicedb-cli) and you can install it by running the following command
+The best way to connect to DiceDB is using [DiceDB CLI](https://github.com/dicedb/dicedb-cli) and you can install it by running the following command
 
 ```bash
 $ sudo su
-$ curl -sL https://raw.githubusercontent.com/DiceDB/dicedb-cli/refs/heads/master/install.sh | sh
+$ curl -sL https://raw.githubusercontent.com/dicedb/dicedb-cli/refs/heads/master/install.sh | sh
 ```
 
-If you are working on unsupported OS (as per above script), you can always follow the installation instructions mentioned in the [dicedb/cli](https://github.com/DiceDB/dicedb-cli) repository.
+If you are working on unsupported OS (as per above script), you can always follow the installation instructions mentioned in the [dicedb/cli](https://github.com/dicedb/dicedb-cli) repository.
 
 ### Building from source
 
 ```sh
-$ git clone https://github.com/DiceDB/dicedb-cli
+$ git clone https://github.com/dicedb/dicedb-cli
 $ cd dicedb-cli
 $ make build
 ```

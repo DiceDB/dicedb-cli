@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/DiceDB/dicedb-cli/bench"
+	"github.com/dicedb/dicedb-cli/bench"
 	"github.com/dicedb/dicedb-go"
 	"github.com/dicedb/dicedb-go/wire"
 )

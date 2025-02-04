@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 set -e
 
-REPO="DiceDB/dicedb-cli"
+REPO="dicedb/dicedb-cli"
 LATEST_RELEASE=$(curl -s https://api.github.com/repos/$REPO/releases/latest | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
 VERSION=$(echo $LATEST_RELEASE | sed 's/^v//')
 
