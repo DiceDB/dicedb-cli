@@ -1,3 +1,5 @@
+VERSION := $(shell cat VERSION)
+
 run:
 	go run main.go
 
@@ -16,16 +18,12 @@ lint: check-golangci-lint
 	golangci-lint run ./...
 
 release:
-	git tag v0.0.3
-	git push origin v0.0.3
+	git tag -a $(VERSION) -m "release $(VERSION)"
+	git push origin $(VERSION)
 	goreleaser release --clean
 
 generate:
 	protoc --go_out=. --go-grpc_out=. protos/cmd.proto
-
-update:
-	git submodule update --remote
-	git submodule update --init --recursive
 
 bench:
 	go run main.go bench --num-connections=4 --engine=ironhawk
