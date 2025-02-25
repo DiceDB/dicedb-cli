@@ -95,6 +95,7 @@ func renderResponse(resp *wire.Response) {
 		fmt.Printf("%s %s\n", boldRed("ERR"), resp.Err)
 		return
 	}
+
 	fmt.Printf("%s ", boldGreen("OK"))
 	if len(resp.Attrs.AsMap()) > 0 {
 		attrs := []string{}
