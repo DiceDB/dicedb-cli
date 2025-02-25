@@ -91,6 +91,10 @@ func Run(host string, port int) {
 }
 
 func renderResponse(resp *wire.Response) {
+	if resp.Err != "" {
+		fmt.Printf("%s %s\n", boldRed("ERR"), resp.Err)
+		return
+	}
 	fmt.Printf("%s ", boldGreen("OK"))
 	if len(resp.Attrs.AsMap()) > 0 {
 		attrs := []string{}
