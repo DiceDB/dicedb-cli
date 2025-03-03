@@ -27,3 +27,7 @@ generate:
 
 bench:
 	go run main.go bench --num-connections=4 --engine=ironhawk
+
+clean:
+	rm -f ./dicedb-cli
+	go clean -modcache -cache -testcache

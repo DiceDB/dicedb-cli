@@ -1,10 +1,10 @@
 module github.com/dicedb/dicedb-cli
 
-go 1.23.5
+go 1.24.0
 
 require (
 	github.com/chzyer/readline v1.5.1
-	github.com/dicedb/dicedb-go v1.0.1
+	github.com/dicedb/dicedb-go v1.0.3
 	github.com/fatih/color v1.18.0
 	github.com/spf13/cobra v1.8.1
 )
@@ -16,7 +16,5 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	golang.org/x/sys v0.25.0 // indirect
-	google.golang.org/protobuf v1.36.4 // indirect
+	google.golang.org/protobuf v1.36.5 // indirect
 )
-
-replace github.com/dicedb/dicedb-go v1.0.1 => ../dicedb-go
