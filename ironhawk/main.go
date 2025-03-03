@@ -17,6 +17,7 @@ var (
 	boldGreen = color.New(color.FgGreen, color.Bold).SprintFunc()
 	boldRed   = color.New(color.FgRed, color.Bold).SprintFunc()
 	boldBlue  = color.New(color.FgBlue, color.Bold).SprintFunc()
+	inWatchMode bool
 )
 
 func Run(host string, port int) {
@@ -36,16 +37,21 @@ func Run(host string, port int) {
 	}
 	defer rl.Close()
 
-	// Setup signal handling
+	// Setup signal handling for main CLI
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt)
 
-	// Handle Ctrl+C in a separate goroutine
+	// Handle Ctrl+C in a separate goroutine for main CLI
 	go func() {
-		<-sigChan
-		fmt.Println("\nreceived interrupt. exiting...")
-		os.Exit(0)
+		for range sigChan {
+			// Only exit if we're not in watch mode
+			if !inWatchMode {
+				fmt.Println("\nreceived interrupt. exiting...")
+				os.Exit(0)
+			}
+		}
 	}()
+
 
 	for {
 		input, err := rl.Readline()
@@ -76,14 +82,48 @@ func Run(host string, port int) {
 
 		if strings.HasSuffix(strings.ToUpper(args[0]), ".WATCH") {
 			fmt.Println("entered the watch mode for", c.Cmd, strings.Join(c.Args, " "))
+			
+			// Create a watch-specific signal channel
+			watchSigChan := make(chan os.Signal, 1)
+			signal.Notify(watchSigChan, os.Interrupt)
+			
 			ch, err := client.WatchCh()
 			if err != nil {
 				fmt.Println("error watching:", err)
 				continue
 			}
-			for resp := range ch {
-				renderResponse(resp)
+
+			// Set watch mode flag
+			inWatchMode = true
+			
+			// Create done channel for watch loop
+			done := make(chan struct{})
+			
+			// Start watch loop in goroutine
+			go func() {
+				for resp := range ch {
+					select {
+					case <-done:
+						return
+					default:
+						renderResponse(resp)
+					}
+				}
+			}()
+
+			// Wait for either CTRL+C or channel close
+			select {
+			case <-watchSigChan:
+				fmt.Println("\nexiting watch mode...")
+				close(done)
+				signal.Stop(watchSigChan)
+			case <-ch:
+				fmt.Println("\nwatch channel closed")
 			}
+
+			// Reset watch mode flag
+			inWatchMode = false
+			
 		} else {
 			renderResponse(resp)
 		}
