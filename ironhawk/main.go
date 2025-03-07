@@ -13,11 +13,18 @@ import (
 	"github.com/fatih/color"
 )
 
+type Mode string
+
+const (
+    CommandMode Mode = "command"
+    WatchMode   Mode = "watch"
+)
+
 var (
-	boldGreen = color.New(color.FgGreen, color.Bold).SprintFunc()
-	boldRed   = color.New(color.FgRed, color.Bold).SprintFunc()
-	boldBlue  = color.New(color.FgBlue, color.Bold).SprintFunc()
-	inWatchMode bool
+    boldGreen = color.New(color.FgGreen, color.Bold).SprintFunc()
+    boldRed   = color.New(color.FgRed, color.Bold).SprintFunc()
+    boldBlue  = color.New(color.FgBlue, color.Bold).SprintFunc()
+    currentMode = CommandMode
 )
 
 func Run(host string, port int) {
@@ -41,17 +48,15 @@ func Run(host string, port int) {
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt)
 
-	// Handle Ctrl+C in a separate goroutine for main CLI
+	// Handle Ctrl+C in a separate goroutine for the main CLI
 	go func() {
 		for range sigChan {
-			// Only exit if we're not in watch mode
-			if !inWatchMode {
-				fmt.Println("\nreceived interrupt. exiting...")
+			if currentMode == CommandMode {
+				fmt.Println("Received interrupt. Exiting...")
 				os.Exit(0)
 			}
 		}
 	}()
-
 
 	for {
 		input, err := rl.Readline()
@@ -68,7 +73,7 @@ func Run(host string, port int) {
 			continue
 		}
 
-		args := strings.Fields(input)
+		args := parseArgs(input)
 		if len(args) == 0 {
 			continue
 		}
@@ -81,49 +86,59 @@ func Run(host string, port int) {
 		resp := client.Fire(c)
 
 		if strings.HasSuffix(strings.ToUpper(args[0]), ".WATCH") {
-			fmt.Println("entered the watch mode for", c.Cmd, strings.Join(c.Args, " "))
-			
+			fmt.Println("Entered watch mode for", c.Cmd, strings.Join(c.Args, " "))
+
 			// Create a watch-specific signal channel
 			watchSigChan := make(chan os.Signal, 1)
 			signal.Notify(watchSigChan, os.Interrupt)
-			
+
 			ch, err := client.WatchCh()
 			if err != nil {
-				fmt.Println("error watching:", err)
+				fmt.Println("Error watching:", err)
 				continue
 			}
 
+			// resp, _ := <-ch
+
+			var fingerprint string
+			if len(resp.Attrs.AsMap()) > 0 {
+				for k, v := range resp.Attrs.AsMap() {
+					if k == "fingerprint" {
+						fingerprint = v.(string) // Extract fingerprint
+					}
+				}
+			}
+
 			// Set watch mode flag
-			inWatchMode = true
-			
-			// Create done channel for watch loop
-			done := make(chan struct{})
-			
-			// Start watch loop in goroutine
+			currentMode = WatchMode
+
+			// Goroutine to listen to watch channel
 			go func() {
-				for resp := range ch {
+				for {
 					select {
-					case <-done:
-						return
-					default:
+					case resp, ok := <-ch:
+						if !ok {
+							fmt.Println("Watch channel closed")
+							return
+						}
 						renderResponse(resp)
 					}
 				}
 			}()
 
-			// Wait for either CTRL+C or channel close
-			select {
-			case <-watchSigChan:
-				fmt.Println("\nexiting watch mode...")
-				close(done)
-				signal.Stop(watchSigChan)
-			case <-ch:
-				fmt.Println("\nwatch channel closed")
+			// Wait until watch mode exits
+			<-watchSigChan
+			fmt.Println("Exiting watch mode...")
+    		currentMode = CommandMode
+    		signal.Stop(watchSigChan)
+
+			unwatchc := &wire.Command{
+				Cmd:  "UNWATCH",
+				Args: []string{fingerprint},
 			}
 
-			// Reset watch mode flag
-			inWatchMode = false
-			
+			client.Fire(unwatchc)
+
 		} else {
 			renderResponse(resp)
 		}
@@ -157,4 +172,32 @@ func renderResponse(resp *wire.Response) {
 	case *wire.Response_VNil:
 		fmt.Printf("(nil)\n")
 	}
+}
+
+func parseArgs(input string) []string {
+	var args []string
+	var currentArg string
+	inQuotes := false
+	var quoteChar byte = '"'
+
+	for i := 0; i < len(input); i++ {
+		c := input[i]
+		if c == ' ' && !inQuotes {
+			if currentArg != "" {
+				args = append(args, currentArg)
+				currentArg = ""
+			}
+		} else if (c == '"' || c == '\'') && !inQuotes {
+			inQuotes = true
+			quoteChar = c
+		} else if c == quoteChar && inQuotes {
+			inQuotes = false
+		} else {
+			currentArg += string(c)
+		}
+	}
+	if currentArg != "" {
+		args = append(args, currentArg)
+	}
+	return args
 }
