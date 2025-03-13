@@ -39,13 +39,22 @@ func Run(host string, port int) {
 	// Setup signal handling
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt)
+	isWatchMode := make(chan bool, 1)
+	sigRouteToWatchMode := make(chan os.Signal, 1)
 
 	// Handle Ctrl+C in a separate goroutine
-	go func() {
-		<-sigChan
-		fmt.Println("\nreceived interrupt. exiting...")
-		os.Exit(0)
-	}()
+	go func(isWatchMode chan bool, sigRouteToWatchMode chan os.Signal) {
+		for sig := range sigChan {
+			select {
+			case <-isWatchMode:
+				sigRouteToWatchMode <- sig
+			default:
+				fmt.Println("\nreceived interrupt. exiting...")
+				os.Exit(0)
+			}
+		}
+
+	}(isWatchMode, sigRouteToWatchMode)
 
 	for {
 		input, err := rl.Readline()
@@ -76,13 +85,21 @@ func Run(host string, port int) {
 
 		if strings.HasSuffix(strings.ToUpper(args[0]), ".WATCH") {
 			fmt.Println("entered the watch mode for", c.Cmd, strings.Join(c.Args, " "))
+			isWatchMode <- true
 			ch, err := client.WatchCh()
 			if err != nil {
 				fmt.Println("error watching:", err)
 				continue
 			}
-			for resp := range ch {
-				renderResponse(resp)
+			exitwatchmode := false
+			for !exitwatchmode {
+				select {
+				case <-sigRouteToWatchMode:
+					fmt.Println("\n exiting the watch mode for", c.Cmd, strings.Join(c.Args, " "))
+					exitwatchmode = true
+				case resp := <-ch:
+					renderResponse(resp)
+				}
 			}
 		} else {
 			renderResponse(resp)
