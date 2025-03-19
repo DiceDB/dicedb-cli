@@ -11,6 +11,7 @@ import (
 	"github.com/dicedb/dicedb-go"
 	"github.com/dicedb/dicedb-go/wire"
 	"github.com/fatih/color"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 var (
@@ -103,6 +104,17 @@ func renderResponse(resp *wire.Response) {
 			attrs = append(attrs, fmt.Sprintf("%s=%s", k, v))
 		}
 		fmt.Printf("[%s] ", strings.Join(attrs, ", "))
+	}
+
+	if resp.VList != nil {
+		for _, item := range resp.VList {
+			switch v := item.Kind.(type) {
+			case *structpb.Value_StringValue:
+				fmt.Printf("%v\n", item.GetStringValue())
+			default:
+				fmt.Println("Unknown type:", v)
+			}
+		}
 	}
 
 	switch resp.Value.(type) {
