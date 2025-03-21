@@ -117,6 +117,13 @@ func renderResponse(resp *wire.Response) {
 	case *wire.Response_VNil:
 		fmt.Printf("(nil)\n")
 	}
+
+	if len(resp.GetVList()) > 0 {
+		fmt.Printf("\n")
+		for i, v := range resp.GetVList() {
+			fmt.Printf("%d) \"%s\"\n", i, v.GetStringValue())
+		}
+	}
 }
 
 func parseArgs(input string) []string {
