@@ -7,6 +7,8 @@ github.com/chzyer/test v1.0.0/go.mod h1:2JlltgoNkt4TW/z9V/IzDdFaMTM2JPIi26O1pF38
 github.com/cpuguy83/go-md2man/v2 v2.0.4/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
 github.com/dicedb/dicedb-go v1.0.3 h1:EHbu1IHnahMd5V8YNQ85NtD67X3iKMvM7u5NLA78LXM=
 github.com/dicedb/dicedb-go v1.0.3/go.mod h1:MXfB3e/FP+92ahgrqWIQV0wjKWscu/CziyCV+Ysdzuc=
+github.com/dicedb/dicedb-go v1.0.4 h1:uDjyx7Ai/h+Jf0QVTLoUdLcfrHoi0qoFO0HM4YfSrlA=
+github.com/dicedb/dicedb-go v1.0.4/go.mod h1:MXfB3e/FP+92ahgrqWIQV0wjKWscu/CziyCV+Ysdzuc=
 github.com/fatih/color v1.18.0 h1:S8gINlzdQ840/4pfAwic/ZE0djQEH3wM94VfqLTZcOM=
 github.com/fatih/color v1.18.0/go.mod h1:4FelSpRwEGDpQ12mAdzqdOukCy4u8WUtOY6lkT/6HfU=
 github.com/google/go-cmp v0.5.5 h1:Khx7svrCpmxxtHBq5j2mp/xVjsi8hQMfNLvJFAlrGgU=
