@@ -105,6 +105,13 @@ func renderResponse(resp *wire.Response) {
 		fmt.Printf("[%s] ", strings.Join(attrs, ", "))
 	}
 
+	if resp.VSsMap != nil && len(resp.VSsMap) > 0 {
+		fmt.Println()
+		for k, v := range resp.VSsMap {
+			fmt.Printf("%s=%s\n", k, v)
+		}
+	}
+
 	switch resp.Value.(type) {
 	case *wire.Response_VStr:
 		fmt.Printf("%s\n", resp.Value.(*wire.Response_VStr).VStr)
