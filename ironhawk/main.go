@@ -125,13 +125,13 @@ func renderResponse(resp *wire.Response) {
 			//TODO: handle structpb.Value_StructValue & structpb.Value_ListValue
 			switch v.GetKind().(type) {
 			case *structpb.Value_NullValue:
-				fmt.Printf("%d) (nil)\n", i)
+				fmt.Printf("%d) (nil)\n", i+1)
 			case *structpb.Value_NumberValue:
-				fmt.Printf("%d) %f\n", i, v.GetNumberValue())
+				fmt.Printf("%d) %f\n", i+1, v.GetNumberValue())
 			case *structpb.Value_StringValue:
-				fmt.Printf("%d) \"%s\"\n", i, v.GetStringValue())
+				fmt.Printf("%d) \"%s\"\n", i+1, v.GetStringValue())
 			case *structpb.Value_BoolValue:
-				fmt.Printf("%d) %t\n", i, v.GetBoolValue())
+				fmt.Printf("%d) %t\n", i+1, v.GetBoolValue())
 			}
 		}
 	}
