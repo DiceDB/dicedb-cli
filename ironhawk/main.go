@@ -74,6 +74,11 @@ func Run(host string, port int) {
 
 		resp := client.Fire(c)
 
+		if resp.Err != "" {
+			renderResponse(resp)
+			continue
+		}
+
 		if strings.HasSuffix(strings.ToUpper(args[0]), ".WATCH") {
 			fmt.Println("entered the watch mode for", c.Cmd, strings.Join(c.Args, " "))
 			ch, err := client.WatchCh()
