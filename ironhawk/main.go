@@ -105,10 +105,17 @@ func renderResponse(resp *wire.Response) {
 		fmt.Printf("[%s] ", strings.Join(attrs, ", "))
 	}
 
-	if resp.VSsMap != nil && len(resp.VSsMap) > 0 {
+	if len(resp.VSsMap) > 0 {
 		fmt.Println()
 		for k, v := range resp.VSsMap {
 			fmt.Printf("%s=%s\n", k, v)
+		}
+	}
+
+	if resp.VList != nil {
+		fmt.Println()
+		for k, v := range resp.VList {
+			fmt.Printf("%d) %s\n", k+1, v.GetStringValue())
 		}
 	}
 
