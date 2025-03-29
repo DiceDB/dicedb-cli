@@ -106,7 +106,7 @@ func renderResponse(resp *wire.Response) {
 		fmt.Printf("[%s] ", strings.Join(attrs, ", "))
 	}
 
-	if resp.VSsMap != nil && len(resp.VSsMap) > 0 {
+	if len(resp.VSsMap) > 0 {
 		fmt.Println()
 		for k, v := range resp.VSsMap {
 			fmt.Printf("%s=%s\n", k, v)
@@ -127,7 +127,7 @@ func renderResponse(resp *wire.Response) {
 	}
 
 	if len(resp.GetVList()) > 0 {
-		fmt.Printf("\n")
+		fmt.Println()
 		for i, v := range resp.GetVList() {
 			//TODO: handle structpb.Value_StructValue & structpb.Value_ListValue
 			switch v.GetKind().(type) {
