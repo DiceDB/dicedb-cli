@@ -37,25 +37,30 @@ func Run(host string, port int) {
 	}
 	defer rl.Close()
 
-	// Setup signal handling
+	// Signal handling
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt)
-	isWatchMode := make(chan bool, 1)
-	sigRouteToWatchMode := make(chan os.Signal, 1)
 
-	// Handle Ctrl+C in a separate goroutine
-	go func(isWatchMode chan bool, sigRouteToWatchMode chan os.Signal) {
+	watchModeSignal := make(chan bool, 1)
+	sigChanWatchMode := make(chan os.Signal, 1)
+
+	// Handling interrupts in a goroutine
+	go func() {
 		for sig := range sigChan {
 			select {
-			case <-isWatchMode:
-				sigRouteToWatchMode <- sig
+			// When in watch mode, capture the signal and send it to
+			// the signal channel for watch mode
+			case <-watchModeSignal:
+				// Instead of exiting the REPL, send the signal to the
+				// watch mode signal channel
+				sigChanWatchMode <- sig
 			default:
+				// when not in watch mode, exit the REPL
 				fmt.Println("\nreceived interrupt. exiting...")
 				os.Exit(0)
 			}
 		}
-
-	}(isWatchMode, sigRouteToWatchMode)
+	}()
 
 	for {
 		input, err := rl.Readline()
@@ -83,7 +88,6 @@ func Run(host string, port int) {
 		}
 
 		resp := client.Fire(c)
-
 		if resp.Err != "" {
 			renderResponse(resp)
 			continue
@@ -91,23 +95,39 @@ func Run(host string, port int) {
 
 		if strings.HasSuffix(strings.ToUpper(args[0]), ".WATCH") {
 			fmt.Println("entered the watch mode for", c.Cmd, strings.Join(c.Args, " "))
-			isWatchMode <- true
+
+			// Send a signal to the primary Signal handler goroutine
+			// that the watch mode has been entered
+			watchModeSignal <- true
+
+			// Get the watch channel and start watching for changes
 			ch, err := client.WatchCh()
 			if err != nil {
 				fmt.Println("error watching:", err)
 				continue
 			}
-			exitwatchmode := false
-			for !exitwatchmode {
+
+			// Start watching for changes
+			// until the user exits the watch mode
+			shouldExitWatchMode := false
+			for !shouldExitWatchMode {
 				select {
-				case <-sigRouteToWatchMode:
-					fmt.Println("\n exiting the watch mode for", c.Cmd, strings.Join(c.Args, " "))
-					exitwatchmode = true
+				// If the user sends a signal Ctrl+C,
+				// It is captured by the signal handler goroutine
+				// and then sent to the watch mode signal channel
+				// which will set the shouldExitWatchMode flag to true
+				case <-sigChanWatchMode:
+					fmt.Println("exiting the watch mode. back to command mode")
+					shouldExitWatchMode = true
 				case resp := <-ch:
+					// If we get any response over the watch channel,
+					// render the response
 					renderResponse(resp)
 				}
 			}
 		} else {
+			// If the command is not a watch command, render the response
+			// and continue to the next command in REPL
 			renderResponse(resp)
 		}
 	}
