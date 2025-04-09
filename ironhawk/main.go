@@ -11,7 +11,7 @@ import (
 	"github.com/dicedb/dicedb-go"
 	"github.com/dicedb/dicedb-go/wire"
 	"github.com/fatih/color"
-	"google.golang.org/protobuf/types/known/structpb"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 var (
@@ -133,57 +133,13 @@ func Run(host string, port int) {
 	}
 }
 
-func renderResponse(resp *wire.Response) {
-	if resp.Err != "" {
-		fmt.Printf("%s %s\n", boldRed("ERR"), resp.Err)
-		return
+func renderResponse(resp *wire.Result) {
+	b, err := protojson.Marshal(resp)
+	if err != nil {
+		log.Fatalf("failed to marshal to JSON: %v", err)
 	}
 
-	fmt.Printf("%s ", boldGreen("OK"))
-	if len(resp.Attrs.AsMap()) > 0 {
-		attrs := []string{}
-		for k, v := range resp.Attrs.AsMap() {
-			attrs = append(attrs, fmt.Sprintf("%s=%s", k, v))
-		}
-		fmt.Printf("[%s] ", strings.Join(attrs, ", "))
-	}
-
-	if len(resp.VSsMap) > 0 {
-		fmt.Println()
-		for k, v := range resp.VSsMap {
-			fmt.Printf("%s=%s\n", k, v)
-		}
-	}
-
-	switch resp.Value.(type) {
-	case *wire.Response_VStr:
-		fmt.Printf("%s\n", resp.Value.(*wire.Response_VStr).VStr)
-	case *wire.Response_VInt:
-		fmt.Printf("%d\n", resp.Value.(*wire.Response_VInt).VInt)
-	case *wire.Response_VFloat:
-		fmt.Printf("%f\n", resp.Value.(*wire.Response_VFloat).VFloat)
-	case *wire.Response_VBytes:
-		fmt.Printf("%s\n", resp.Value.(*wire.Response_VBytes).VBytes)
-	case *wire.Response_VNil:
-		fmt.Printf("(nil)\n")
-	}
-
-	if len(resp.GetVList()) > 0 {
-		fmt.Println()
-		for i, v := range resp.GetVList() {
-			//TODO: handle structpb.Value_StructValue & structpb.Value_ListValue
-			switch v.GetKind().(type) {
-			case *structpb.Value_NullValue:
-				fmt.Printf("%d) (nil)\n", i+1)
-			case *structpb.Value_NumberValue:
-				fmt.Printf("%d) %f\n", i+1, v.GetNumberValue())
-			case *structpb.Value_StringValue:
-				fmt.Printf("%d) \"%s\"\n", i+1, v.GetStringValue())
-			case *structpb.Value_BoolValue:
-				fmt.Printf("%d) %t\n", i+1, v.GetBoolValue())
-			}
-		}
-	}
+	fmt.Println(string(b))
 }
 
 func parseArgs(input string) []string {
