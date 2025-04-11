@@ -16,8 +16,9 @@ import (
 )
 
 var (
-	boldRed  = color.New(color.FgRed, color.Bold).SprintFunc()
-	boldBlue = color.New(color.FgBlue, color.Bold).SprintFunc()
+	boldRed   = color.New(color.FgRed, color.Bold).SprintFunc()
+	boldBlue  = color.New(color.FgBlue, color.Bold).SprintFunc()
+	boldGreen = color.New(color.FgGreen, color.Bold).SprintFunc()
 )
 
 func Run(host string, port int) {
@@ -139,16 +140,26 @@ func renderResponse(resp *wire.Result) {
 		return
 	}
 
-	b, err := protojson.Marshal(resp)
-	if err != nil {
-		log.Fatalf("failed to marshal to JSON: %v", err)
+	switch resp.Response.(type) {
+	case *wire.Result_GETRes:
+		fmt.Printf("%s \"%s\"\n", boldGreen(resp.Message), resp.GetGETRes().Value)
+	case *wire.Result_SETRes:
+		fmt.Printf("%s\n", boldGreen(resp.Message))
+	case *wire.Result_FLUSHDBRes:
+		fmt.Printf("%s\n", boldGreen(resp.Message))
+	default:
+		fmt.Println("note: this response is JSON serialized version of the response because it is not supported by this version of the CLI. You can upgrade the CLI to the latest version to get a formatted response.")
+		b, err := protojson.Marshal(resp)
+		if err != nil {
+			log.Fatalf("failed to marshal to JSON: %v", err)
+		}
+
+		var m map[string]interface{}
+		_ = json.Unmarshal(b, &m)
+
+		nb, _ := json.MarshalIndent(m, "", "  ")
+		fmt.Println(string(nb))
 	}
-
-	var m map[string]interface{}
-	_ = json.Unmarshal(b, &m)
-
-	nb, _ := json.MarshalIndent(m, "", "  ")
-	fmt.Println(string(nb))
 }
 
 func parseArgs(input string) []string {
