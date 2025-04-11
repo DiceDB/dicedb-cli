@@ -134,6 +134,11 @@ func Run(host string, port int) {
 }
 
 func renderResponse(resp *wire.Result) {
+	if resp.Err != "" {
+		fmt.Printf("%s %s\n", boldRed("ERR"), resp.Err)
+		return
+	}
+
 	b, err := protojson.Marshal(resp)
 	if err != nil {
 		log.Fatalf("failed to marshal to JSON: %v", err)
@@ -142,10 +147,8 @@ func renderResponse(resp *wire.Result) {
 	var m map[string]interface{}
 	_ = json.Unmarshal(b, &m)
 
-	for _, v := range m {
-		bv, _ := json.MarshalIndent(v, "", "  ")
-		fmt.Println(string(bv))
-	}
+	nb, _ := json.MarshalIndent(m, "", "  ")
+	fmt.Println(string(nb))
 }
 
 func parseArgs(input string) []string {
