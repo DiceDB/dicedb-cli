@@ -147,6 +147,16 @@ func renderResponse(resp *wire.Result) {
 		fmt.Printf("%s\n", boldGreen(resp.Message))
 	case *wire.Result_FLUSHDBRes:
 		fmt.Printf("%s\n", boldGreen(resp.Message))
+	case *wire.Result_DELRes:
+		fmt.Printf("%s %d\n", boldGreen(resp.Message), resp.GetDELRes().Count)
+	case *wire.Result_DECRRes:
+		fmt.Printf("%s %d\n", boldGreen(resp.Message), resp.GetDECRRes().Value)
+	case *wire.Result_INCRRes:
+		fmt.Printf("%s %d\n", boldGreen(resp.Message), resp.GetINCRRes().Value)
+	case *wire.Result_DECRBYRes:
+		fmt.Printf("%s %d\n", boldGreen(resp.Message), resp.GetDECRBYRes().Value)
+	case *wire.Result_INCRBYRes:
+		fmt.Printf("%s %d\n", boldGreen(resp.Message), resp.GetINCRBYRes().Value)
 	default:
 		fmt.Println("note: this response is JSON serialized version of the response because it is not supported by this version of the CLI. You can upgrade the CLI to the latest version to get a formatted response.")
 		b, err := protojson.Marshal(resp)
