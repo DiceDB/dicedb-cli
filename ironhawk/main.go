@@ -1,6 +1,7 @@
 package ironhawk
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -139,7 +140,13 @@ func renderResponse(resp *wire.Result) {
 		log.Fatalf("failed to marshal to JSON: %v", err)
 	}
 
-	fmt.Println(string(b))
+	var m map[string]interface{}
+	json.Unmarshal(b, &m)
+
+	for _, v := range m {
+		bv, _ := json.MarshalIndent(v, "", "  ")
+		fmt.Println(string(bv))
+	}
 }
 
 func parseArgs(input string) []string {
