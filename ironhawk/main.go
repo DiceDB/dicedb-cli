@@ -16,9 +16,8 @@ import (
 )
 
 var (
-	boldGreen = color.New(color.FgGreen, color.Bold).SprintFunc()
-	boldRed   = color.New(color.FgRed, color.Bold).SprintFunc()
-	boldBlue  = color.New(color.FgBlue, color.Bold).SprintFunc()
+	boldRed  = color.New(color.FgRed, color.Bold).SprintFunc()
+	boldBlue = color.New(color.FgBlue, color.Bold).SprintFunc()
 )
 
 func Run(host string, port int) {
@@ -141,7 +140,7 @@ func renderResponse(resp *wire.Result) {
 	}
 
 	var m map[string]interface{}
-	json.Unmarshal(b, &m)
+	_ = json.Unmarshal(b, &m)
 
 	for _, v := range m {
 		bv, _ := json.MarshalIndent(v, "", "  ")
