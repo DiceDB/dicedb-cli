@@ -88,7 +88,7 @@ func Run(host string, port int) {
 		}
 
 		resp := client.Fire(c)
-		if resp.Err != "" {
+		if resp.Status == wire.Status_ERR {
 			renderResponse(resp)
 			continue
 		}
@@ -134,8 +134,8 @@ func Run(host string, port int) {
 }
 
 func renderResponse(resp *wire.Result) {
-	if resp.Err != "" {
-		fmt.Printf("%s %s\n", boldRed("ERR"), resp.Err)
+	if resp.Status == wire.Status_ERR {
+		fmt.Printf("%s %s\n", boldRed("ERR"), resp.Message)
 		return
 	}
 
