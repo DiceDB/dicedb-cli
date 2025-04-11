@@ -161,6 +161,8 @@ func renderResponse(resp *wire.Result) {
 		fmt.Printf("%s %s\n", boldGreen(resp.Message), resp.GetECHORes().Message)
 	case *wire.Result_EXISTSRes:
 		fmt.Printf("%s %d\n", boldGreen(resp.Message), resp.GetEXISTSRes().Count)
+	case *wire.Result_EXPIRERes:
+		fmt.Printf("%s %v\n", boldGreen(resp.Message), resp.GetEXPIRERes().IsChanged)
 	default:
 		fmt.Println("note: this response is JSON serialized version of the response because it is not supported by this version of the CLI. You can upgrade the CLI to the latest version to get a formatted response.")
 		b, err := protojson.Marshal(resp)
