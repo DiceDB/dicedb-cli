@@ -169,6 +169,10 @@ func renderResponse(resp *wire.Result) {
 		fmt.Printf("%s %v\n", boldGreen(resp.Message), resp.GetEXPIREATRes().IsChanged)
 	case *wire.Result_EXPIRETIMERes:
 		fmt.Printf("%s %v\n", boldGreen(resp.Message), resp.GetEXPIRETIMERes().UnixSec)
+	case *wire.Result_TTLRes:
+		fmt.Printf("%s %v\n", boldGreen(resp.Message), resp.GetTTLRes().Seconds)
+	case *wire.Result_GETEXRes:
+		fmt.Printf("%s %v\n", boldGreen(resp.Message), resp.GetGETEXRes().Value)
 	default:
 		fmt.Println("note: this response is JSON serialized version of the response because it is not supported by this version of the CLI. You can upgrade the CLI to the latest version to get a formatted response.")
 		b, err := protojson.Marshal(resp)
