@@ -143,6 +143,8 @@ func renderResponse(resp *wire.Result) {
 	switch resp.Response.(type) {
 	case *wire.Result_GETRes:
 		fmt.Printf("%s \"%s\"\n", boldGreen(resp.Message), resp.GetGETRes().Value)
+	case *wire.Result_GETDELRes:
+		fmt.Printf("%s \"%s\"\n", boldGreen(resp.Message), resp.GetGETDELRes().Value)
 	case *wire.Result_SETRes:
 		fmt.Printf("%s\n", boldGreen(resp.Message))
 	case *wire.Result_FLUSHDBRes:
