@@ -193,6 +193,8 @@ func renderResponse(resp *wire.Result) {
 		}
 	case *wire.Result_PINGRes:
 		fmt.Printf("%s \"%s\"\n", boldGreen(resp.Message), resp.GetPINGRes().Message)
+	case *wire.Result_TYPERes:
+		fmt.Printf("%s %s\n", boldGreen(resp.Message), resp.GetTYPERes().Type)
 	default:
 		fmt.Println("note: this response is JSON serialized version of the response because it is not supported by this version of the CLI. You can upgrade the CLI to the latest version to get a formatted response.")
 		b, err := protojson.Marshal(resp)
