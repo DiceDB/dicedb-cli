@@ -140,70 +140,87 @@ func renderResponse(resp *wire.Result) {
 		return
 	}
 
+	fmt.Printf("%s ", boldGreen(resp.Message))
+	m := resp.Attrs.AsMap()
+
+	if len(m) > 0 {
+		fmt.Printf("[")
+		for k, v := range m {
+			fmt.Printf("%s=%s ", k, v)
+		}
+		fmt.Printf("] ")
+	}
+
 	switch resp.Response.(type) {
 	case *wire.Result_GETRes:
-		fmt.Printf("%s \"%s\"\n", boldGreen(resp.Message), resp.GetGETRes().Value)
+		fmt.Printf("\"%s\"\n", resp.GetGETRes().Value)
 	case *wire.Result_GETDELRes:
-		fmt.Printf("%s \"%s\"\n", boldGreen(resp.Message), resp.GetGETDELRes().Value)
+		fmt.Printf("\"%s\"\n", resp.GetGETDELRes().Value)
 	case *wire.Result_SETRes:
-		fmt.Printf("%s\n", boldGreen(resp.Message))
+		fmt.Printf("\n")
 	case *wire.Result_FLUSHDBRes:
-		fmt.Printf("%s\n", boldGreen(resp.Message))
+		fmt.Printf("\n")
 	case *wire.Result_DELRes:
-		fmt.Printf("%s %d\n", boldGreen(resp.Message), resp.GetDELRes().Count)
+		fmt.Printf("%d\n", resp.GetDELRes().Count)
 	case *wire.Result_DECRRes:
-		fmt.Printf("%s %d\n", boldGreen(resp.Message), resp.GetDECRRes().Value)
+		fmt.Printf("%d\n", resp.GetDECRRes().Value)
 	case *wire.Result_INCRRes:
-		fmt.Printf("%s %d\n", boldGreen(resp.Message), resp.GetINCRRes().Value)
+		fmt.Printf("%d\n", resp.GetINCRRes().Value)
 	case *wire.Result_DECRBYRes:
-		fmt.Printf("%s %d\n", boldGreen(resp.Message), resp.GetDECRBYRes().Value)
+		fmt.Printf("%d\n", resp.GetDECRBYRes().Value)
 	case *wire.Result_INCRBYRes:
-		fmt.Printf("%s %d\n", boldGreen(resp.Message), resp.GetINCRBYRes().Value)
+		fmt.Printf("%d\n", resp.GetINCRBYRes().Value)
 	case *wire.Result_ECHORes:
-		fmt.Printf("%s %s\n", boldGreen(resp.Message), resp.GetECHORes().Message)
+		fmt.Printf("%s\n", resp.GetECHORes().Message)
 	case *wire.Result_EXISTSRes:
-		fmt.Printf("%s %d\n", boldGreen(resp.Message), resp.GetEXISTSRes().Count)
+		fmt.Printf("%d\n", resp.GetEXISTSRes().Count)
 	case *wire.Result_EXPIRERes:
-		fmt.Printf("%s %v\n", boldGreen(resp.Message), resp.GetEXPIRERes().IsChanged)
+		fmt.Printf("%v\n", resp.GetEXPIRERes().IsChanged)
 	case *wire.Result_EXPIREATRes:
-		fmt.Printf("%s %v\n", boldGreen(resp.Message), resp.GetEXPIREATRes().IsChanged)
+		fmt.Printf("%v\n", resp.GetEXPIREATRes().IsChanged)
 	case *wire.Result_EXPIRETIMERes:
-		fmt.Printf("%s %v\n", boldGreen(resp.Message), resp.GetEXPIRETIMERes().UnixSec)
+		fmt.Printf("%d\n", resp.GetEXPIRETIMERes().UnixSec)
 	case *wire.Result_TTLRes:
-		fmt.Printf("%s %v\n", boldGreen(resp.Message), resp.GetTTLRes().Seconds)
+		fmt.Printf("%d\n", resp.GetTTLRes().Seconds)
 	case *wire.Result_GETEXRes:
-		fmt.Printf("%s \"%s\"\n", boldGreen(resp.Message), resp.GetGETEXRes().Value)
+		fmt.Printf("\"%s\"\n", resp.GetGETEXRes().Value)
 	case *wire.Result_GETSETRes:
-		fmt.Printf("%s \"%s\"\n", boldGreen(resp.Message), resp.GetGETSETRes().Value)
+		fmt.Printf("\"%s\"\n", resp.GetGETSETRes().Value)
 	case *wire.Result_HANDSHAKERes:
-		fmt.Printf("%s\n", boldGreen(resp.Message))
+		fmt.Printf("\n")
 	case *wire.Result_HGETRes:
-		fmt.Printf("%s \"%s\"\n", boldGreen(resp.Message), resp.GetHGETRes().Value)
+		fmt.Printf("\"%s\"\n", resp.GetHGETRes().Value)
 	case *wire.Result_HSETRes:
-		fmt.Printf("%s %d\n", boldGreen(resp.Message), resp.GetHSETRes().Count)
+		fmt.Printf("%d\n", resp.GetHSETRes().Count)
 	case *wire.Result_HGETALLRes:
-		fmt.Printf("%s\n", boldGreen(resp.Message))
+		fmt.Printf("\n")
 		for i, e := range resp.GetHGETALLRes().Elements {
 			fmt.Printf("%d) %s=\"%s\"\n", i, e.Key, e.Value)
 		}
 	case *wire.Result_KEYSRes:
-		fmt.Printf("%s\n", boldGreen(resp.Message))
+		fmt.Printf("\n")
 		for i, key := range resp.GetKEYSRes().Keys {
 			fmt.Printf("%d) %s\n", i, key)
 		}
 	case *wire.Result_PINGRes:
-		fmt.Printf("%s \"%s\"\n", boldGreen(resp.Message), resp.GetPINGRes().Message)
+		fmt.Printf("\"%s\"\n", resp.GetPINGRes().Message)
 	case *wire.Result_TYPERes:
-		fmt.Printf("%s %s\n", boldGreen(resp.Message), resp.GetTYPERes().Type)
+		fmt.Printf("%s\n", resp.GetTYPERes().Type)
 	case *wire.Result_ZADDRes:
-		fmt.Printf("%s %d\n", boldGreen(resp.Message), resp.GetZADDRes().Count)
+		fmt.Printf("%d\n", resp.GetZADDRes().Count)
 	case *wire.Result_ZCOUNTRes:
-		fmt.Printf("%s %d\n", boldGreen(resp.Message), resp.GetZCOUNTRes().Count)
+		fmt.Printf("%d\n", resp.GetZCOUNTRes().Count)
 	case *wire.Result_ZRANGERes:
-		fmt.Printf("%s\n", boldGreen(resp.Message))
+		fmt.Printf("\n")
 		for i, e := range resp.GetZRANGERes().Elements {
 			fmt.Printf("%d) %s=%d\n", i, e.Member, e.Score)
 		}
+	case *wire.Result_GETWATCHRes:
+		fmt.Printf("\n")
+	case *wire.Result_HGETWATCHRes:
+		fmt.Printf("\n")
+	case *wire.Result_HGETALLWATCHRes:
+		fmt.Printf("\n")
 	default:
 		fmt.Println("note: this response is JSON serialized version of the response because it is not supported by this version of the CLI. You can upgrade the CLI to the latest version to get a formatted response.")
 		b, err := protojson.Marshal(resp)
