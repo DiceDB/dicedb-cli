@@ -195,6 +195,15 @@ func renderResponse(resp *wire.Result) {
 		fmt.Printf("%s \"%s\"\n", boldGreen(resp.Message), resp.GetPINGRes().Message)
 	case *wire.Result_TYPERes:
 		fmt.Printf("%s %s\n", boldGreen(resp.Message), resp.GetTYPERes().Type)
+	case *wire.Result_ZADDRes:
+		fmt.Printf("%s %d\n", boldGreen(resp.Message), resp.GetZADDRes().Count)
+	case *wire.Result_ZCOUNTRes:
+		fmt.Printf("%s %d\n", boldGreen(resp.Message), resp.GetZCOUNTRes().Count)
+	case *wire.Result_ZRANGERes:
+		fmt.Printf("%s\n", boldGreen(resp.Message))
+		for i, e := range resp.GetZRANGERes().Elements {
+			fmt.Printf("%d) %s=%d\n", i, e.Member, e.Score)
+		}
 	default:
 		fmt.Println("note: this response is JSON serialized version of the response because it is not supported by this version of the CLI. You can upgrade the CLI to the latest version to get a formatted response.")
 		b, err := protojson.Marshal(resp)
