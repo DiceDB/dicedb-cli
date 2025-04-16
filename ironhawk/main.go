@@ -221,6 +221,8 @@ func renderResponse(resp *wire.Result) {
 		fmt.Printf("\n")
 	case *wire.Result_HGETALLWATCHRes:
 		fmt.Printf("\n")
+	case *wire.Result_UNWATCHRes:
+		fmt.Printf("\n")
 	default:
 		fmt.Println("note: this response is JSON serialized version of the response because it is not supported by this version of the CLI. You can upgrade the CLI to the latest version to get a formatted response.")
 		b, err := protojson.Marshal(resp)
