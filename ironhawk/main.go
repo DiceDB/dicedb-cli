@@ -1,6 +1,7 @@
 package ironhawk
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -11,13 +12,13 @@ import (
 	"github.com/dicedb/dicedb-go"
 	"github.com/dicedb/dicedb-go/wire"
 	"github.com/fatih/color"
-	"google.golang.org/protobuf/types/known/structpb"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 var (
-	boldGreen = color.New(color.FgGreen, color.Bold).SprintFunc()
 	boldRed   = color.New(color.FgRed, color.Bold).SprintFunc()
 	boldBlue  = color.New(color.FgBlue, color.Bold).SprintFunc()
+	boldGreen = color.New(color.FgGreen, color.Bold).SprintFunc()
 )
 
 func Run(host string, port int) {
@@ -88,7 +89,7 @@ func Run(host string, port int) {
 		}
 
 		resp := client.Fire(c)
-		if resp.Err != "" {
+		if resp.Status == wire.Status_ERR {
 			renderResponse(resp)
 			continue
 		}
@@ -133,56 +134,105 @@ func Run(host string, port int) {
 	}
 }
 
-func renderResponse(resp *wire.Response) {
-	if resp.Err != "" {
-		fmt.Printf("%s %s\n", boldRed("ERR"), resp.Err)
+func renderResponse(resp *wire.Result) {
+	if resp.Status == wire.Status_ERR {
+		fmt.Printf("%s %s\n", boldRed("ERR"), resp.Message)
 		return
 	}
 
-	fmt.Printf("%s ", boldGreen("OK"))
-	if len(resp.Attrs.AsMap()) > 0 {
-		attrs := []string{}
-		for k, v := range resp.Attrs.AsMap() {
-			attrs = append(attrs, fmt.Sprintf("%s=%s", k, v))
+	fmt.Printf("%s ", boldGreen(resp.Message))
+	m := resp.Attrs.AsMap()
+
+	if len(m) > 0 {
+		fmt.Printf("[")
+		for k, v := range m {
+			fmt.Printf("%s=%s ", k, v)
 		}
-		fmt.Printf("[%s] ", strings.Join(attrs, ", "))
+		fmt.Printf("] ")
 	}
 
-	if len(resp.VSsMap) > 0 {
-		fmt.Println()
-		for k, v := range resp.VSsMap {
-			fmt.Printf("%s=%s\n", k, v)
+	switch resp.Response.(type) {
+	case *wire.Result_GETRes:
+		fmt.Printf("\"%s\"\n", resp.GetGETRes().Value)
+	case *wire.Result_GETDELRes:
+		fmt.Printf("\"%s\"\n", resp.GetGETDELRes().Value)
+	case *wire.Result_SETRes:
+		fmt.Printf("\n")
+	case *wire.Result_FLUSHDBRes:
+		fmt.Printf("\n")
+	case *wire.Result_DELRes:
+		fmt.Printf("%d\n", resp.GetDELRes().Count)
+	case *wire.Result_DECRRes:
+		fmt.Printf("%d\n", resp.GetDECRRes().Value)
+	case *wire.Result_INCRRes:
+		fmt.Printf("%d\n", resp.GetINCRRes().Value)
+	case *wire.Result_DECRBYRes:
+		fmt.Printf("%d\n", resp.GetDECRBYRes().Value)
+	case *wire.Result_INCRBYRes:
+		fmt.Printf("%d\n", resp.GetINCRBYRes().Value)
+	case *wire.Result_ECHORes:
+		fmt.Printf("%s\n", resp.GetECHORes().Message)
+	case *wire.Result_EXISTSRes:
+		fmt.Printf("%d\n", resp.GetEXISTSRes().Count)
+	case *wire.Result_EXPIRERes:
+		fmt.Printf("%v\n", resp.GetEXPIRERes().IsChanged)
+	case *wire.Result_EXPIREATRes:
+		fmt.Printf("%v\n", resp.GetEXPIREATRes().IsChanged)
+	case *wire.Result_EXPIRETIMERes:
+		fmt.Printf("%d\n", resp.GetEXPIRETIMERes().UnixSec)
+	case *wire.Result_TTLRes:
+		fmt.Printf("%d\n", resp.GetTTLRes().Seconds)
+	case *wire.Result_GETEXRes:
+		fmt.Printf("\"%s\"\n", resp.GetGETEXRes().Value)
+	case *wire.Result_GETSETRes:
+		fmt.Printf("\"%s\"\n", resp.GetGETSETRes().Value)
+	case *wire.Result_HANDSHAKERes:
+		fmt.Printf("\n")
+	case *wire.Result_HGETRes:
+		fmt.Printf("\"%s\"\n", resp.GetHGETRes().Value)
+	case *wire.Result_HSETRes:
+		fmt.Printf("%d\n", resp.GetHSETRes().Count)
+	case *wire.Result_HGETALLRes:
+		fmt.Printf("\n")
+		for i, e := range resp.GetHGETALLRes().Elements {
+			fmt.Printf("%d) %s=\"%s\"\n", i, e.Key, e.Value)
 		}
-	}
-
-	switch resp.Value.(type) {
-	case *wire.Response_VStr:
-		fmt.Printf("%s\n", resp.Value.(*wire.Response_VStr).VStr)
-	case *wire.Response_VInt:
-		fmt.Printf("%d\n", resp.Value.(*wire.Response_VInt).VInt)
-	case *wire.Response_VFloat:
-		fmt.Printf("%f\n", resp.Value.(*wire.Response_VFloat).VFloat)
-	case *wire.Response_VBytes:
-		fmt.Printf("%s\n", resp.Value.(*wire.Response_VBytes).VBytes)
-	case *wire.Response_VNil:
-		fmt.Printf("(nil)\n")
-	}
-
-	if len(resp.GetVList()) > 0 {
-		fmt.Println()
-		for i, v := range resp.GetVList() {
-			//TODO: handle structpb.Value_StructValue & structpb.Value_ListValue
-			switch v.GetKind().(type) {
-			case *structpb.Value_NullValue:
-				fmt.Printf("%d) (nil)\n", i+1)
-			case *structpb.Value_NumberValue:
-				fmt.Printf("%d) %f\n", i+1, v.GetNumberValue())
-			case *structpb.Value_StringValue:
-				fmt.Printf("%d) \"%s\"\n", i+1, v.GetStringValue())
-			case *structpb.Value_BoolValue:
-				fmt.Printf("%d) %t\n", i+1, v.GetBoolValue())
-			}
+	case *wire.Result_KEYSRes:
+		fmt.Printf("\n")
+		for i, key := range resp.GetKEYSRes().Keys {
+			fmt.Printf("%d) %s\n", i, key)
 		}
+	case *wire.Result_PINGRes:
+		fmt.Printf("\"%s\"\n", resp.GetPINGRes().Message)
+	case *wire.Result_TYPERes:
+		fmt.Printf("%s\n", resp.GetTYPERes().Type)
+	case *wire.Result_ZADDRes:
+		fmt.Printf("%d\n", resp.GetZADDRes().Count)
+	case *wire.Result_ZCOUNTRes:
+		fmt.Printf("%d\n", resp.GetZCOUNTRes().Count)
+	case *wire.Result_ZRANGERes:
+		fmt.Printf("\n")
+		for i, e := range resp.GetZRANGERes().Elements {
+			fmt.Printf("%d) %s=%d\n", i, e.Member, e.Score)
+		}
+	case *wire.Result_GETWATCHRes:
+		fmt.Printf("\n")
+	case *wire.Result_HGETWATCHRes:
+		fmt.Printf("\n")
+	case *wire.Result_HGETALLWATCHRes:
+		fmt.Printf("\n")
+	default:
+		fmt.Println("note: this response is JSON serialized version of the response because it is not supported by this version of the CLI. You can upgrade the CLI to the latest version to get a formatted response.")
+		b, err := protojson.Marshal(resp)
+		if err != nil {
+			log.Fatalf("failed to marshal to JSON: %v", err)
+		}
+
+		var m map[string]interface{}
+		_ = json.Unmarshal(b, &m)
+
+		nb, _ := json.MarshalIndent(m, "", "  ")
+		fmt.Println(string(nb))
 	}
 }
 
