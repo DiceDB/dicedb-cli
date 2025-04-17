@@ -237,6 +237,8 @@ func renderResponse(resp *wire.Result) {
 		fmt.Printf("\n")
 	case *wire.Result_ZCOUNTWATCHRes:
 		fmt.Printf("\n")
+	case *wire.Result_ZRANKWATCHRes:
+		fmt.Printf("\n")
 	case *wire.Result_UNWATCHRes:
 		fmt.Printf("\n")
 	default:
