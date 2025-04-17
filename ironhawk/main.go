@@ -12,11 +12,8 @@ import (
 	"github.com/dicedb/dicedb-go"
 	"github.com/dicedb/dicedb-go/wire"
 	"github.com/fatih/color"
-feat/shlex-cli-parser
 	"github.com/google/shlex"
-	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/encoding/protojson"
-
 )
 
 var (
