@@ -141,14 +141,8 @@ func renderResponse(resp *wire.Result) {
 	}
 
 	fmt.Printf("%s ", boldGreen(resp.Message))
-	m := resp.Attrs.AsMap()
-
-	if len(m) > 0 {
-		fmt.Printf("[")
-		for k, v := range m {
-			fmt.Printf("%s=%s ", k, v)
-		}
-		fmt.Printf("] ")
+	if resp.Fingerprint64 != 0 {
+		fmt.Printf("[fingerprint=%d] ", resp.Fingerprint64)
 	}
 
 	switch resp.Response.(type) {
@@ -236,6 +230,12 @@ func renderResponse(resp *wire.Result) {
 	case *wire.Result_HGETWATCHRes:
 		fmt.Printf("\n")
 	case *wire.Result_HGETALLWATCHRes:
+		fmt.Printf("\n")
+	case *wire.Result_ZRANGEWATCHRes:
+		fmt.Printf("\n")
+	case *wire.Result_ZCARDWATCHRes:
+		fmt.Printf("\n")
+	case *wire.Result_ZCOUNTWATCHRes:
 		fmt.Printf("\n")
 	case *wire.Result_UNWATCHRes:
 		fmt.Printf("\n")
