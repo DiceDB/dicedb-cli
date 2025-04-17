@@ -213,8 +213,22 @@ func renderResponse(resp *wire.Result) {
 	case *wire.Result_ZRANGERes:
 		fmt.Printf("\n")
 		for i, e := range resp.GetZRANGERes().Elements {
-			fmt.Printf("%d) %s=%d\n", i, e.Member, e.Score)
+			fmt.Printf("%d) %d, %s\n", i, e.Score, e.Member)
 		}
+	case *wire.Result_ZPOPMAXRes:
+		fmt.Printf("\n")
+		for i, e := range resp.GetZPOPMAXRes().Elements {
+			fmt.Printf("%d) %d, %s\n", i, e.Score, e.Member)
+		}
+	case *wire.Result_ZPOPMINRes:
+		fmt.Printf("\n")
+		for i, e := range resp.GetZPOPMINRes().Elements {
+			fmt.Printf("%d) %d, %s\n", i, e.Score, e.Member)
+		}
+	case *wire.Result_ZREMRes:
+		fmt.Printf("%d\n", resp.GetZREMRes().Count)
+	case *wire.Result_ZRANKRes:
+		fmt.Printf("%d, %d, %s\n", resp.GetZRANKRes().Rank, resp.GetZRANKRes().Element.Score, resp.GetZRANKRes().Element.Member)
 	case *wire.Result_GETWATCHRes:
 		fmt.Printf("\n")
 	case *wire.Result_HGETWATCHRes:
