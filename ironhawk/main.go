@@ -141,14 +141,8 @@ func renderResponse(resp *wire.Result) {
 	}
 
 	fmt.Printf("%s ", boldGreen(resp.Message))
-	m := resp.Attrs.AsMap()
-
-	if len(m) > 0 {
-		fmt.Printf("[")
-		for k, v := range m {
-			fmt.Printf("%s=%s ", k, v)
-		}
-		fmt.Printf("] ")
+	if resp.Fingerprint64 != 0 {
+		fmt.Printf("[fingerprint=%d] ", resp.Fingerprint64)
 	}
 
 	switch resp.Response.(type) {
@@ -213,13 +207,39 @@ func renderResponse(resp *wire.Result) {
 	case *wire.Result_ZRANGERes:
 		fmt.Printf("\n")
 		for i, e := range resp.GetZRANGERes().Elements {
-			fmt.Printf("%d) %s=%d\n", i, e.Member, e.Score)
+			fmt.Printf("%d) %d, %s\n", i, e.Score, e.Member)
 		}
+	case *wire.Result_ZPOPMAXRes:
+		fmt.Printf("\n")
+		for i, e := range resp.GetZPOPMAXRes().Elements {
+			fmt.Printf("%d) %d, %s\n", i, e.Score, e.Member)
+		}
+	case *wire.Result_ZPOPMINRes:
+		fmt.Printf("\n")
+		for i, e := range resp.GetZPOPMINRes().Elements {
+			fmt.Printf("%d) %d, %s\n", i, e.Score, e.Member)
+		}
+	case *wire.Result_ZREMRes:
+		fmt.Printf("%d\n", resp.GetZREMRes().Count)
+	case *wire.Result_ZCARDRes:
+		fmt.Printf("%d\n", resp.GetZCARDRes().Count)
+	case *wire.Result_ZRANKRes:
+		fmt.Printf("%d, %d, %s\n", resp.GetZRANKRes().Rank, resp.GetZRANKRes().Element.Score, resp.GetZRANKRes().Element.Member)
 	case *wire.Result_GETWATCHRes:
 		fmt.Printf("\n")
 	case *wire.Result_HGETWATCHRes:
 		fmt.Printf("\n")
 	case *wire.Result_HGETALLWATCHRes:
+		fmt.Printf("\n")
+	case *wire.Result_ZRANGEWATCHRes:
+		fmt.Printf("\n")
+	case *wire.Result_ZCARDWATCHRes:
+		fmt.Printf("\n")
+	case *wire.Result_ZCOUNTWATCHRes:
+		fmt.Printf("\n")
+	case *wire.Result_ZRANKWATCHRes:
+		fmt.Printf("\n")
+	case *wire.Result_UNWATCHRes:
 		fmt.Printf("\n")
 	default:
 		fmt.Println("note: this response is JSON serialized version of the response because it is not supported by this version of the CLI. You can upgrade the CLI to the latest version to get a formatted response.")
