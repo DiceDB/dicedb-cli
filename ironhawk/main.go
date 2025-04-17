@@ -12,6 +12,7 @@ import (
 	"github.com/dicedb/dicedb-go"
 	"github.com/dicedb/dicedb-go/wire"
 	"github.com/fatih/color"
+	"github.com/google/shlex"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -257,29 +258,10 @@ func renderResponse(resp *wire.Result) {
 }
 
 func parseArgs(input string) []string {
-	var args []string
-	var currentArg string
-	inQuotes := false
-	var quoteChar byte = '"'
-
-	for i := 0; i < len(input); i++ {
-		c := input[i]
-		if c == ' ' && !inQuotes {
-			if currentArg != "" {
-				args = append(args, currentArg)
-				currentArg = ""
-			}
-		} else if (c == '"' || c == '\'') && !inQuotes {
-			inQuotes = true
-			quoteChar = c
-		} else if c == quoteChar && inQuotes {
-			inQuotes = false
-		} else {
-			currentArg += string(c)
-		}
-	}
-	if currentArg != "" {
-		args = append(args, currentArg)
+	args, err := shlex.Split(input)
+	if err != nil {
+		fmt.Printf("%s failed to parse command: %v\n", boldRed("ERR"), err)
+		return []string{}
 	}
 	return args
 }
