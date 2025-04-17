@@ -227,6 +227,8 @@ func renderResponse(resp *wire.Result) {
 		}
 	case *wire.Result_ZREMRes:
 		fmt.Printf("%d\n", resp.GetZREMRes().Count)
+	case *wire.Result_ZCARDRes:
+		fmt.Printf("%d\n", resp.GetZCARDRes().Count)
 	case *wire.Result_ZRANKRes:
 		fmt.Printf("%d, %d, %s\n", resp.GetZRANKRes().Rank, resp.GetZRANKRes().Element.Score, resp.GetZRANKRes().Element.Member)
 	case *wire.Result_GETWATCHRes:
