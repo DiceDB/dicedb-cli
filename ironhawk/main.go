@@ -120,7 +120,6 @@ func Run(host string, port int) {
 				// which will set the shouldExitWatchMode flag to true
 				case <-sigChanWatchMode:
 					fmt.Println("exiting the watch mode. back to command mode")
-					client.WatchConnClose()
 					shouldExitWatchMode = true
 				case resp := <-ch:
 					// If we get any response over the watch channel,
