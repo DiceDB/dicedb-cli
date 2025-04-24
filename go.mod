@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/chzyer/readline v1.5.1
-	github.com/dicedb/dicedb-go v1.0.6
+	github.com/dicedb/dicedb-go v1.0.7
 	github.com/fatih/color v1.18.0
 	github.com/spf13/cobra v1.8.1
 	google.golang.org/protobuf v1.36.6
