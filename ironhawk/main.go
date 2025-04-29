@@ -135,6 +135,10 @@ func Run(host string, port int) {
 	}
 }
 
+func printZElement(e *wire.ZElement) {
+	fmt.Printf("%d) %d, %s\n", e.Rank, e.Score, e.Member)
+}
+
 func renderResponse(resp *wire.Result) {
 	if resp.Status == wire.Status_ERR {
 		fmt.Printf("%s %s\n", boldRed("ERR"), resp.Message)
@@ -207,25 +211,25 @@ func renderResponse(resp *wire.Result) {
 		fmt.Printf("%d\n", resp.GetZCOUNTRes().Count)
 	case *wire.Result_ZRANGERes:
 		fmt.Printf("\n")
-		for i, e := range resp.GetZRANGERes().Elements {
-			fmt.Printf("%d) %d, %s\n", i, e.Score, e.Member)
+		for _, e := range resp.GetZRANGERes().Elements {
+			printZElement(e)
 		}
 	case *wire.Result_ZPOPMAXRes:
 		fmt.Printf("\n")
-		for i, e := range resp.GetZPOPMAXRes().Elements {
-			fmt.Printf("%d) %d, %s\n", i, e.Score, e.Member)
+		for _, e := range resp.GetZPOPMAXRes().Elements {
+			printZElement(e)
 		}
 	case *wire.Result_ZPOPMINRes:
 		fmt.Printf("\n")
-		for i, e := range resp.GetZPOPMINRes().Elements {
-			fmt.Printf("%d) %d, %s\n", i, e.Score, e.Member)
+		for _, e := range resp.GetZPOPMINRes().Elements {
+			printZElement(e)
 		}
 	case *wire.Result_ZREMRes:
 		fmt.Printf("%d\n", resp.GetZREMRes().Count)
 	case *wire.Result_ZCARDRes:
 		fmt.Printf("%d\n", resp.GetZCARDRes().Count)
 	case *wire.Result_ZRANKRes:
-		fmt.Printf("%d, %d, %s\n", resp.GetZRANKRes().Rank, resp.GetZRANKRes().Element.Score, resp.GetZRANKRes().Element.Member)
+		printZElement(resp.GetZRANKRes().Element)
 	case *wire.Result_GETWATCHRes:
 		fmt.Printf("\n")
 	case *wire.Result_HGETWATCHRes:

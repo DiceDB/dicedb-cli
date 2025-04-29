@@ -5,8 +5,8 @@ github.com/chzyer/readline v1.5.1/go.mod h1:Eh+b79XXUwfKfcPLepksvw2tcLE/Ct21YObk
 github.com/chzyer/test v1.0.0 h1:p3BQDXSxOhOG0P9z6/hGnII4LGiEPOYBhs8asl/fC04=
 github.com/chzyer/test v1.0.0/go.mod h1:2JlltgoNkt4TW/z9V/IzDdFaMTM2JPIi26O1pF38GC8=
 github.com/cpuguy83/go-md2man/v2 v2.0.4/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
-github.com/dicedb/dicedb-go v1.0.8 h1:4Z1Qo9lWdOmSOKOTpV8rzinFSUgQU3ui5mx7OMBaTac=
-github.com/dicedb/dicedb-go v1.0.8/go.mod h1:V1fiCJnPfSObKWrOJ/zrhHEGlLwT9k3pKCto3sz1oW8=
+github.com/dicedb/dicedb-go v1.0.9 h1:WtXtX6Bu/KFjhnOIlnoo9Z1hbmOtL2tMrUmS6793/Pw=
+github.com/dicedb/dicedb-go v1.0.9/go.mod h1:V1fiCJnPfSObKWrOJ/zrhHEGlLwT9k3pKCto3sz1oW8=
 github.com/fatih/color v1.18.0 h1:S8gINlzdQ840/4pfAwic/ZE0djQEH3wM94VfqLTZcOM=
 github.com/fatih/color v1.18.0/go.mod h1:4FelSpRwEGDpQ12mAdzqdOukCy4u8WUtOY6lkT/6HfU=
 github.com/google/go-cmp v0.5.5 h1:Khx7svrCpmxxtHBq5j2mp/xVjsi8hQMfNLvJFAlrGgU=
