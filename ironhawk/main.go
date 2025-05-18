@@ -138,6 +138,20 @@ func Run(host string, port int) {
 func printZElement(e *wire.ZElement) {
 	fmt.Printf("%d) %d, %s\n", e.Rank, e.Score, e.Member)
 }
+func printGeoElement(e *wire.GEOElement) {
+	var printString string = fmt.Sprintf("%d)", e.Rank)
+	if e.Hash != 0 {
+		printString += fmt.Sprintf(" %d,", e.Hash)
+	}
+	if e.Distance != 0 {
+		printString += fmt.Sprintf(" %f,", e.Distance)
+	}
+	if e.Coordinates != nil {
+		printString += fmt.Sprintf(" (%f, %f),", e.Coordinates.Longitude, e.Coordinates.Latitude)
+	}
+	printString += fmt.Sprintf(" %s\n", e.Member)
+	fmt.Printf(printString)
+}
 
 func renderResponse(resp *wire.Result) {
 	if resp.Status == wire.Status_ERR {
@@ -246,6 +260,15 @@ func renderResponse(resp *wire.Result) {
 		fmt.Printf("\n")
 	case *wire.Result_UNWATCHRes:
 		fmt.Printf("\n")
+	case *wire.Result_GEOADDRes:
+		fmt.Printf("%d\n", resp.GetGEOADDRes().Count)
+	case *wire.Result_GEODISTRes:
+		fmt.Printf("%f\n", resp.GetGEODISTRes().Distance)
+	case *wire.Result_GEOSEARCHRes:
+		fmt.Printf("\n")
+		for _, e := range resp.GetGEOSEARCHRes().Elements {
+			printGeoElement(e)
+		}
 	default:
 		fmt.Println("note: this response is JSON serialized version of the response because it is not supported by this version of the CLI. You can upgrade the CLI to the latest version to get a formatted response.")
 		b, err := protojson.Marshal(resp)
