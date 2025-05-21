@@ -138,8 +138,8 @@ func Run(host string, port int) {
 func printZElement(e *wire.ZElement) {
 	fmt.Printf("%d) %d, %s\n", e.Rank, e.Score, e.Member)
 }
-func printGeoElement(e *wire.GEOElement) {
-	var printString string = fmt.Sprintf("%d)", e.Rank)
+func printGeoElement(index int, e *wire.GEOElement) {
+	var printString string = fmt.Sprintf("%d)", index)
 	if e.Hash != 0 {
 		printString += fmt.Sprintf(" %d,", e.Hash)
 	}
@@ -266,8 +266,8 @@ func renderResponse(resp *wire.Result) {
 		fmt.Printf("%f\n", resp.GetGEODISTRes().Distance)
 	case *wire.Result_GEOSEARCHRes:
 		fmt.Printf("\n")
-		for _, e := range resp.GetGEOSEARCHRes().Elements {
-			printGeoElement(e)
+		for i, e := range resp.GetGEOSEARCHRes().Elements {
+			printGeoElement(i, e)
 		}
 	default:
 		fmt.Println("note: this response is JSON serialized version of the response because it is not supported by this version of the CLI. You can upgrade the CLI to the latest version to get a formatted response.")
