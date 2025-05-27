@@ -269,6 +269,23 @@ func renderResponse(resp *wire.Result) {
 		for i, e := range resp.GetGEOSEARCHRes().Elements {
 			printGeoElement(i, e)
 		}
+	case *wire.Result_GEOHASHRes:
+		fmt.Printf("\n")
+		for i, hash := range resp.GetGEOHASHRes().Hashes {
+			if len(hash) == 0 {
+				hash = "nil"
+			}
+			fmt.Printf("%d) %s\n", i, hash)
+		}
+	case *wire.Result_GEOPOSRes:
+		fmt.Printf("\n")
+		for i, coord := range resp.GetGEOPOSRes().Coordinates {
+			if coord.Latitude == 0 || coord.Longitude == 0 {
+				fmt.Printf("%d) (nil)\n", i)
+			} else {
+				fmt.Printf("%d) %f, %f\n", i, coord.Longitude, coord.Latitude)
+			}
+		}
 	default:
 		fmt.Println("note: this response is JSON serialized version of the response because it is not supported by this version of the CLI. You can upgrade the CLI to the latest version to get a formatted response.")
 		b, err := protojson.Marshal(resp)
