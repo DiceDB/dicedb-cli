@@ -138,19 +138,9 @@ func Run(host string, port int) {
 func printZElement(e *wire.ZElement) {
 	fmt.Printf("%d) %d, %s\n", e.Rank, e.Score, e.Member)
 }
-func printGeoElement(index int, e *wire.GEOElement) {
-	var printString string = fmt.Sprintf("%d)", index)
-	if e.Hash != 0 {
-		printString += fmt.Sprintf(" %d,", e.Hash)
-	}
-	if e.Distance != 0 {
-		printString += fmt.Sprintf(" %f,", e.Distance)
-	}
-	if e.Coordinates != nil {
-		printString += fmt.Sprintf(" (%f, %f),", e.Coordinates.Longitude, e.Coordinates.Latitude)
-	}
-	printString += fmt.Sprintf(" %s\n", e.Member)
-	fmt.Printf(printString)
+
+func printGEOElement(index int, e *wire.GEOElement) {
+	fmt.Printf("%d) %d, %f, (%f, %f), %s\n", index, e.Hash, e.Distance, e.Coords.Longitude, e.Coords.Latitude, e.Member)
 }
 
 func renderResponse(resp *wire.Result) {
@@ -267,7 +257,7 @@ func renderResponse(resp *wire.Result) {
 	case *wire.Result_GEOSEARCHRes:
 		fmt.Printf("\n")
 		for i, e := range resp.GetGEOSEARCHRes().Elements {
-			printGeoElement(i, e)
+			printGEOElement(i, e)
 		}
 	case *wire.Result_GEOHASHRes:
 		fmt.Printf("\n")
@@ -279,7 +269,7 @@ func renderResponse(resp *wire.Result) {
 		}
 	case *wire.Result_GEOPOSRes:
 		fmt.Printf("\n")
-		for i, coord := range resp.GetGEOPOSRes().Coordinates {
+		for i, coord := range resp.GetGEOPOSRes().Coords {
 			if coord.Latitude == 0 || coord.Longitude == 0 {
 				fmt.Printf("%d) (nil)\n", i)
 			} else {
