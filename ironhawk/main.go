@@ -71,11 +71,15 @@ func Run(host string, port int) {
 		}
 		input = strings.TrimSpace(input)
 
-		if input == "exit" {
+		switch input {
+		case "":
+			continue
+		case "exit":
 			return
-		}
-
-		if input == "" {
+		case "clear":
+			// \033[H moves the cursor to the top-left corner of the screen.
+			// \033[2J clears the entire screen.
+			fmt.Print("\033[H\033[2J")
 			continue
 		}
 
