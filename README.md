@@ -53,7 +53,7 @@ You can execute any DiceDB command directly:
 
 ```bash
 localhost:7379> SET k1 v1
-OK OK
+OK
 localhost:7379> GET k1
 OK "v1"
 localhost:7379> DEL k1
